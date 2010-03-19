@@ -3,6 +3,8 @@ from urllib import urlencode, urlopen
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django_cas.exceptions import CasTicketException
 
 class Tgt(models.Model):
     username = models.CharField(max_length = 255, unique = True)
@@ -32,7 +34,7 @@ class Tgt(models.Model):
             if tree[0].tag.endswith('proxySuccess'):
                 return tree[0][0].text
             else:
-                return None
+                raise CasTicketException("Failed to get proxy ticket")
         finally:
             page.close()
 
@@ -42,4 +44,7 @@ class PgtIOU(models.Model):
     timestamp = models.DateTimeField(auto_now = True)
 
 def get_tgt_for(user):
-    return Tgt.objects.get(username = user.username)
+    try:
+        return Tgt.objects.get(username = user.username)
+    except ObjectDoesNotExist:
+        raise CasTicketException("no ticket found for user " + user.username)
