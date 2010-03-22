@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django_cas.exceptions import CasTicketException
+from django_cas.exceptions import CasTicketException, CasConfigException
 
 class Tgt(models.Model):
     username = models.CharField(max_length = 255, unique = True)
@@ -15,6 +15,8 @@ class Tgt(models.Model):
 
         Returns username on success and None on failure.
         """
+        if not settings.CAS_PROXY_CALLBACK:
+            raise CasConfigException("No proxy callback set in settings")
 
         try:
             from xml.etree import ElementTree
@@ -44,6 +46,9 @@ class PgtIOU(models.Model):
     timestamp = models.DateTimeField(auto_now = True)
 
 def get_tgt_for(user):
+    if not settings.CAS_PROXY_CALLBACK:
+        raise CasConfigException("No proxy callback set in settings")
+
     try:
         return Tgt.objects.get(username = user.username)
     except ObjectDoesNotExist:
