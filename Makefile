@@ -11,3 +11,5 @@ clean:
 	rm -rf build dist django_cas.egg-info temp
 install:
 	$(PYTHON) setup.py install --prefix="$(PREFIX)"
+sdist:
+	$(PYTHON) setup.py sdist

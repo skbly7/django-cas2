@@ -56,7 +56,14 @@ def _verify_cas2(ticket, service):
         if tree[0].tag.endswith('authenticationSuccess'):
             username = tree[0][0].text
             if len(tree[0]) >= 2 and tree[0][1].tag.endswith('proxyGrantingTicket'):
-                pgtIou = PgtIOU.objects.get(pgtIou = tree[0][1].text)
+                pgtIou = None
+                retries_left = 3
+                while not pgtIou and retries_left:
+                    try:
+                        pgtIou = PgtIOU.objects.get(pgtIou = tree[0][1].text)
+                    except ObjectDoesNotExist:
+                        time.sleep(1)
+                        retries_left -= 1
                 try:
                     tgt = Tgt.objects.get(username = username)
                     tgt.tgt = pgtIou.tgt
