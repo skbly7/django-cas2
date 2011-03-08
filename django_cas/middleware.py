@@ -47,8 +47,8 @@ class CASMiddleware(object):
                 error = ('<h1>Forbidden</h1><p>You do not have staff '
                          'privileges.</p>')
                 return HttpResponseForbidden(error)
-        params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})
-        return HttpResponseRedirect(settings.REQUIRE_LOGIN_PATH + '?' + params)
+        params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})        
+        return HttpResponseRedirect(settings.LOGIN_URL + '?' + params)
 
     def process_exception(self, request, exception):
         """When we get a CasTicketException, that is probably caused by the ticket timing out.
