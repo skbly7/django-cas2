@@ -67,4 +67,4 @@ def delete_old_tickets(**kwargs):
     sender.objects.filter(timestamp__lt=expire).delete()
 
 post_save.connect(delete_old_tickets, sender=PgtIOU)
-post_save.connect(delete_old_tickets, sender=Tgt)
+#post_save.connect(delete_old_tickets, sender=Tgt)
