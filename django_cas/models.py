@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django_cas.exceptions import CasTicketException, CasConfigException
 from django.db.models.signals import post_save
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Tgt(models.Model):
     username = models.CharField(max_length = 255, unique = True)
@@ -63,7 +63,7 @@ def delete_old_tickets(**kwargs):
     """
     sender = kwargs.get('sender', None)
     now = datetime.now()
-    expire = datetime(now.year, now.month, now.day - 2)
+    expire = datetime(now.year, now.month, now.day) - timedelta(days=2)
     sender.objects.filter(timestamp__lt=expire).delete()
 
 post_save.connect(delete_old_tickets, sender=PgtIOU)
