@@ -6,7 +6,7 @@ from urlparse import urljoin
 from django.http import get_host, HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django_cas.models import PgtIOU
+from django_cas.models import PgtIOU, SessionServiceTicket
 
 __all__ = ['login', 'logout']
 
@@ -88,8 +88,32 @@ def login(request, next_page=None, required=False):
         return HttpResponseRedirect(_login_url(service))
 
 
+def _get_session(samlp):
+    """ Recovers the session mapped with the CAS service ticket
+    received in the SAML CAS request at CAS logout
+    """
+    try:
+        from xml.etree import ElementTree as ET
+    except ImportError:
+        from elementtree import ElementTree as ET
+
+    try:
+        tree = ET.fromstring(samlp)
+        if tree[1].tag.endswith('SessionIndex'):
+            ticket = tree[1].text
+        sst = SessionServiceTicket.objects.get(pk=ticket)
+    except:
+        return None
+    return sst.get_session()
+
+
+
 def logout(request, next_page=None):
     """Redirects to CAS logout page"""
+    cas_logout_request = request.POST.get('logoutRequest', '')
+    if cas_logout_request:
+        session = _get_session(cas_logout_request)
+        request.session = session
 
     from django.contrib.auth import logout
     logout(request)
