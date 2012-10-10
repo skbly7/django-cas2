@@ -10,27 +10,7 @@ import time
 
 __all__ = ['CASBackend']
 
-def _verify_cas1(ticket, service):
-    """Verifies CAS 1.0 authentication ticket.
-
-    Returns username on success and None on failure.
-    """
-
-    params = {'ticket': ticket, 'service': service}
-    url = (urljoin(settings.CAS_SERVER_URL, 'validate') + '?' +
-           urlencode(params))
-    page = urlopen(url)
-    try:
-        verified = page.readline().strip()
-        if verified == 'yes':
-            return page.readline().strip()
-        else:
-            return None
-    finally:
-        page.close()
-
-
-def _verify_cas2(ticket, service):
+def verify(ticket, service):
     """Verifies CAS 2.0+ XML-based authentication ticket.
 
     Returns username on success and None on failure.
@@ -113,14 +93,6 @@ def verify_proxy_ticket(ticket, service):
         page.close()
     
 
-_PROTOCOLS = {'1': _verify_cas1, '2': _verify_cas2}
-
-if settings.CAS_VERSION not in _PROTOCOLS:
-    raise ValueError('Unsupported CAS_VERSION %r' % settings.CAS_VERSION)
-
-_verify = _PROTOCOLS[settings.CAS_VERSION]
-
-
 class CASBackend(object):
     """CAS authentication backend"""
     supports_object_permissions = False
@@ -130,7 +102,7 @@ class CASBackend(object):
     def authenticate(self, ticket, service):
         """Verifies CAS ticket and gets or creates User object"""
 
-        username = _verify(ticket, service)
+        username = verify(ticket, service)
         if not username:
             return None
         try:
