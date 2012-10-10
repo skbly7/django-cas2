@@ -29,18 +29,17 @@ def _redirect_url(request):
     """Redirects to referring page, or CAS_REDIRECT_URL if no referrer is
     set.
     """
-
-    next = request.GET.get(REDIRECT_FIELD_NAME)
-    if not next:
+    redirect_to = request.GET.get(REDIRECT_FIELD_NAME)
+    if not redirect_to:
         if settings.CAS_IGNORE_REFERER:
-            next = settings.CAS_REDIRECT_URL
+            redirect_to = settings.CAS_REDIRECT_URL
         else:
-            next = request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL)
+            redirect_to = request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL)
         prefix = (('http://', 'https://')[request.is_secure()] +
                   get_host(request))
-        if next.startswith(prefix):
-            next = next[len(prefix):]
-    return next
+        if redirect_to.startswith(prefix):
+            redirect_to = next[len(prefix):]
+    return redirect_to
 
 
 def _login_url(service):
