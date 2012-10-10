@@ -6,8 +6,8 @@ except ImportError:
     from distutils.core import setup
 
 setup(
-    author='Brodie Rao',
-    author_email='brodie.rao@cpcc.edu',
+    author='KTH Infosys',
+    author_email='itsc@kth.se',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -18,12 +18,12 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    description='CAS 1.0/2.0 authentication backend for Django',
+    description='CAS 2.0 authentication backend for Django',
     download_url='http://code.google.com/r/edmundcrewe-proxypatch/source',
     keywords='django cas cas2 authentication middleware backend',
     license='MIT',
     long_description="""
-``django_cas`` is a `CAS`_ 1.0 and CAS 2.0 authentication backend for
+``django_cas`` is a `CAS` 2.0 authentication backend for
 `Django`_. It allows you to use Django's built-in authentication mechanisms
 and ``User`` model while adding support for CAS.
 
