@@ -1,39 +1,33 @@
-from urlparse import urljoin
-from urllib import urlencode, urlopen
-from django.db import models
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django_cas.exceptions import CasTicketException, CasConfigException
-from django.db.models.signals import post_save
 from datetime import datetime, timedelta
-from django.dispatch.dispatcher import receiver
+from django.conf import settings
+from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.contrib.sessions.backends.db import SessionStore
-from django.contrib.auth import BACKEND_SESSION_KEY
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
 from django_cas.backends import CASBackend
+from django_cas.exceptions import CasTicketException, CasConfigException
+from urllib import urlencode, urlopen
+from urlparse import urljoin
+from xml.etree import ElementTree
 
 class Tgt(models.Model):
     username = models.CharField(max_length = 255, unique = True)
     tgt = models.CharField(max_length = 255)
 
     def get_proxy_ticket_for(self, service):
-        """Verifies CAS 2.0+ XML-based authentication ticket.
+        """ Verifies CAS 2.0+ XML-based authentication ticket.
 
-        Returns username on success and None on failure.
+            Returns username on success and None on failure.
         """
         if not settings.CAS_PROXY_CALLBACK:
             raise CasConfigException("No proxy callback set in settings")
 
-        try:
-            from xml.etree import ElementTree
-        except ImportError:
-            from elementtree import ElementTree
-
         params = {'pgt': self.tgt, 'targetService': service}
 
-        url = (urljoin(settings.CAS_SERVER_URL, 'proxy') + '?' +
-               urlencode(params))
-
+        url = (urljoin(settings.CAS_SERVER_URL, 'proxy') + '?' + urlencode(params))
         page = urlopen(url)
 
         try:

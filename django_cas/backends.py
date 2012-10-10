@@ -1,34 +1,27 @@
 """CAS authentication backend"""
 
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django_cas.models import Tgt, PgtIOU
 from urllib import urlencode, urlopen
 from urlparse import urljoin
-
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django_cas.models import User, Tgt, PgtIOU
+from xml.etree import ElementTree
 import time
 
 __all__ = ['CASBackend']
 
 def verify(ticket, service):
-    """Verifies CAS 2.0+ XML-based authentication ticket.
+    """ Verifies CAS 2.0+ XML-based authentication ticket.
 
-    Returns username on success and None on failure.
+        Returns username on success and None on failure.
     """
-
-    try:
-        from xml.etree import ElementTree
-    except ImportError:
-        from elementtree import ElementTree
-
     if settings.CAS_PROXY_CALLBACK:
         params = {'ticket': ticket, 'service': service, 'pgtUrl': settings.CAS_PROXY_CALLBACK}
     else:
         params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
-           urlencode(params))
-
+    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params))
     page = urlopen(url)
 
     try:
@@ -61,21 +54,12 @@ def verify(ticket, service):
 
 
 def verify_proxy_ticket(ticket, service):
-    """Verifies CAS 2.0+ XML-based proxy ticket.
-
-    Returns username on success and None on failure.
+    """ Verifies CAS 2.0+ XML-based proxy ticket.
+        Returns username on success and None on failure.
     """
-
-    try:
-        from xml.etree import ElementTree
-    except ImportError:
-        from elementtree import ElementTree
-
     params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
-           urlencode(params))
-
+    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params))
     page = urlopen(url)
 
     try:
@@ -94,7 +78,7 @@ def verify_proxy_ticket(ticket, service):
     
 
 class CASBackend(object):
-    """CAS authentication backend"""
+    """ CAS authentication backend """
     supports_object_permissions = False
     supports_anonymous_user = False
     supports_inactive_user = False
