@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.contrib.sessions.backends.db import SessionStore
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import post_save
@@ -61,6 +60,8 @@ class SessionServiceTicket(models.Model):
 
     def get_session(self):
         """ Searches the session in store and returns it """
+        session_engine = __import__(name=settings.SESSION_ENGINE, fromlist=['SessionStore'])
+        SessionStore = getattr(session_engine, 'SessionStore')
         return SessionStore(session_key=self.session_key)
 
     def __unicode__(self):

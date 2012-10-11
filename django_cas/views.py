@@ -1,4 +1,4 @@
-"""CAS login/logout replacement views"""
+""" CAS login/logout replacement views """
 
 from django.conf import settings
 from django.contrib import auth
@@ -68,6 +68,14 @@ def login(request, next_page=None, required=False):
 
     if not next_page:
         next_page = _redirect_url(request)
+        
+    cas_sso_request = request.POST.get('logoutRequest')
+    if cas_sso_request:
+        request.session = _get_session(cas_sso_request)
+        logger.debug("Got single sign out callback from CAS server for session %s", request.session.session_key)
+        auth.logout(request)
+        return HttpResponseRedirect(next_page)
+        
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)
 
@@ -104,11 +112,6 @@ def _get_session(logout_response):
 
 def logout(request, next_page=None):
     """ Redirects to CAS logout page. """
-
-    cas_logout_response = request.POST.get('logoutRequest', '')
-    if cas_logout_response:
-        request.session = _get_session(cas_logout_response)
-        logger.debug("Got single sign out callback from CAS server for session %s", request.session)
 
     auth.logout(request)
     if not next_page:
