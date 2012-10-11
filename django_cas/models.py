@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
@@ -95,7 +94,7 @@ def get_tgt_for(user):
 
     try:
         return Tgt.objects.get(username = user.username)
-    except ObjectDoesNotExist:
+    except Tgt.DoesNotExist:
         raise CasTicketException("no ticket found for user " + user.username)
 
 def delete_old_tickets(**kwargs):
