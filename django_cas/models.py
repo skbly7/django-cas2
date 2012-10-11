@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
-from django_cas.backends import CASBackend
+from django.utils.translation import ugettext_lazy as _
 from django_cas.exceptions import CasTicketException, CasConfigException
 from urllib import urlencode, urlopen
 from urlparse import urljoin
@@ -51,7 +51,7 @@ class SessionServiceTicket(models.Model):
         as long as user is connected to an application that uses the CASBackend
         for authentication
     """
-    service_ticket = models.CharField(_('service ticket'), max_length=256, primary_key=True)
+    service_ticket = models.CharField(_('service ticket'), max_length=255, primary_key=True)
     session_key = models.CharField(_('session key'), max_length=40)
 
     class Meta:
@@ -69,6 +69,7 @@ class SessionServiceTicket(models.Model):
 def _is_cas_backend(session):
     """ Checks if the auth backend is CASBackend """
     backend = session[BACKEND_SESSION_KEY]
+    from django_cas.backends import CASBackend
     return backend == '{0.__module__}.{0.__name__}'.format(CASBackend)
 
 @receiver(user_logged_in)
