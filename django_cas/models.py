@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_cas.exceptions import CasTicketException, CasConfigException
 from urllib import urlencode, urlopen
 from urlparse import urljoin
-from xml.etree import ElementTree
+from xml.dom import minidom
 
 class Tgt(models.Model):
     username = models.CharField(max_length = 255, unique = True)
@@ -25,17 +25,13 @@ class Tgt(models.Model):
             raise CasConfigException("No proxy callback set in settings")
 
         params = {'pgt': self.tgt, 'targetService': service}
-
-        url = (urljoin(settings.CAS_SERVER_URL, 'proxy') + '?' + urlencode(params))
-        page = urlopen(url)
+        page = urlopen(urljoin(settings.CAS_SERVER_URL, 'proxy') + '?' + urlencode(params))
 
         try:
-            response = page.read()
-            tree = ElementTree.fromstring(response)
-            if tree[0].tag.endswith('proxySuccess'):
-                return tree[0][0].text
-            else:
-                raise CasTicketException("Failed to get proxy ticket")
+            response = minidom.parseString(page.read())
+            if response.getElementsByTagName('cas:proxySuccess'):
+                return response.getElementsByTagName('cas:proxyTicket')[0].firstChild.nodeValue
+            raise CasTicketException("Failed to get proxy ticket")
         finally:
             page.close()
 
