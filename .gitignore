@@ -1,0 +1,5 @@
+django_cas.egg-info
+dist
+build
+*.pyc
+
