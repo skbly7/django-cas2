@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 try:
     from setuptools import setup
 except ImportError:
@@ -19,7 +17,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     description='CAS 2.0 authentication backend for Django',
-    download_url='http://code.google.com/r/edmundcrewe-proxypatch/source',
+    download_url='https://github.com/fjollberg/django-cas2',
     keywords='django cas cas2 authentication middleware backend',
     license='MIT',
     long_description="""
@@ -36,6 +34,6 @@ to the admin interface.
 """,
     name='django_cas',
     packages=['django_cas'],
-    url='http://code.google.com/p/django-cas/',
+    url='https://github.com/fjollberg/django-cas2',
     version='2.0.3-KTH-11',
 )
