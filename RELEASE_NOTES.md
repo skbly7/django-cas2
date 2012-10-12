@@ -1,6 +1,10 @@
 Release Notes
 -------------
 
+## Version KTH-1.0
+ 
+* Completed fork of project.
+
 ## Version 2.0.3-KTH-11
 
 * Incorporated support for single sign out. 

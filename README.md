@@ -116,3 +116,6 @@ not been integrated but are in fact lost in the repo changes.
 
 Also the django_cas project suffers from dead code, some wierdness and support for really, 
 really old versions of CAS, Python and Django, bogging it down.
+
+The module is still called django_cas for the time being, the rationale being that it is
+a drop-in replacement and I don't want to handle the migrations issues in the database for now.

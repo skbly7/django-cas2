@@ -35,5 +35,5 @@ to the admin interface.
     name='django_cas',
     packages=['django_cas'],
     url='https://github.com/fjollberg/django-cas2',
-    version='2.0.3-KTH-11',
+    version='KTH-1.0',
 )
