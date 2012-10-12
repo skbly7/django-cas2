@@ -56,56 +56,68 @@ support also the proxy call back URL, see optional settings below.
 #### Mandatory setting
 
 `CAS_SERVER_URL: None`,
-	Mandatory. The URL for the CAS server.
+
+Mandatory. The URL for the CAS server.
 
 #### Optional settings
 
 `CAS_EXTRA_LOGIN_PARAMS: None`
-	A dictionary of extra URL parameters to add to the login URL when redirecting the user.
-	Ex: CAS_EXTRA_LOGIN_PARAMS = {'renew' : 'true'}
+
+A dictionary of extra URL parameters to add to the login URL when redirecting the user.
+Ex: CAS_EXTRA_LOGIN_PARAMS = {'renew' : 'true'}
 
 `CAS_LOGOUT_COMPLETELY: True`
-	If `True`, redirect and do a CAS logout when user logs out of the Django application.
+
+If `True`, redirect and do a CAS logout when user logs out of the Django application.
 
 `CAS_SINGLE_SIGN_OUT: True`
-	If `True`, support single sign out reqeusts form the CAS server and sign out of the
-	Django application when a user signs out of CAS.
+
+If `True`, support single sign out reqeusts form the CAS server and sign out of the
+Django application when a user signs out of CAS.
 
 `CAS_REDIRECT_URL: '/'`
-	Default URL to redirect to after login and logout when there is no referrer or next
-	page provided by Django.
+
+Default URL to redirect to after login and logout when there is no referrer or next
+page provided by Django.
 
 `CAS_IGNORE_REFERER: False`
-	If `True`, logging out of the application will always send the user to the URL specified by `CAS_REDIRECT_URL`.
+
+If `True`, logging out of the application will always send the user to the URL specified by `CAS_REDIRECT_URL`.
 
 `CAS_RETRY_LOGIN: False`
-	If `True`, redirect back to CAS server if CAS authentication fails.
+
+If `True`, redirect back to CAS server if CAS authentication fails.
 
 `CAS_PROXY_CALLBACK: None`
-	The callback URL the CAS server should use to inject proxy tickets. Setting this enables
-	proxy granting ticket support. The URL must also be registered in urls.py and handled
-	by the django_cas.views.proxy_callback, e.g:
-    `(r'^accounts/login/casProxyCallback$', 'django_cas.views.proxy_callback')`
-    See [Proxy CAS Authentication](PROXY_AUTHENTICATION.md) for more information and 
-    trouble shooting hints.
+
+The callback URL the CAS server should use to inject proxy tickets. Setting this enables
+proxy granting ticket support. The URL must also be registered in urls.py and handled
+by the django_cas.views.proxy_callback, e.g:
+`(r'^accounts/login/casProxyCallback$', 'django_cas.views.proxy_callback')`
+See [Proxy CAS Authentication](https://github.com/fjollberg/django-cas2/PROXY_AUTHENTICATION.md)
+for more information and trouble shooting hints.
 	
 `CAS_LOGOUT_REQUEST_ALLOWED: ()`
-	TODO: DROP THIS AND ONLY ALLOW SERVER IN CAS_SERVER_URL TO LOGOUT, OR REMOVE COMPLETELY.
+
+TODO: DROP THIS AND ONLY ALLOW SERVER IN CAS_SERVER_URL TO LOGOUT, OR REMOVE COMPLETELY.
 
 `CAS_AUTO_CREATE_USERS : False`
-	If `True`, automatically create accounts for authenticated users which don't have one. This
-	is a change in behavior from the original django-cas module which hade no such option and
-	auto created users.
+
+If `True`, automatically create accounts for authenticated users which don't have one. This
+is a change in behavior from the original django-cas module which hade no such option and
+auto created users.
 
 `CAS_ALLOWED_PROXIES : []`
-	A list of URLs of proxies that are allowed to proxy authenticate to the Django application.
-	If set, the proxy chain provided by the CAS server in the validation response must not contain
-	services that are not included in this list. There is currently no wild carding or other magic.
+
+A list of URLs of proxies that are allowed to proxy authenticate to the Django application.
+If set, the proxy chain provided by the CAS server in the validation response must not contain
+services that are not included in this list. There is currently no wild carding or other magic.
 
 ## Copyrights
 
-The source has been and is licensed by a MIT [license](LICENCE.md). In other words, do as you please with
-it, but don't think you can hold us liable for any damage caused to or by you if you use it.
+The source has been and is licensed by a MIT [license](https://github.com/fjollberg/django-cas2/LICENCE.md).
+In other words, do as you please with it, but don't think you can hold us liable for any damage caused
+to or by you if you use it.
 
 ## Rationale for forking
 
