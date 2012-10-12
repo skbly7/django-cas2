@@ -37,6 +37,17 @@ AUTHENTICATION_BACKENDS = (
 )
 ```
 
+The login and logout URLs must be handled in the urls.py file, and to use proxy authentication
+support also the proxy call back URL, see optional settings below.
+
+```
+...
+(r'^accounts/login/$', 'django_cas.views.login'),
+(r'^accounts/logout/$', 'django_cas.views.logout'),
+...
+```
+
+
 ### Configuration options for django-cas2
 
 #### Mandatory setting
@@ -86,6 +97,17 @@ AUTHENTICATION_BACKENDS = (
 	If set, the proxy chain provided by the CAS server in the validation response must not contain
 	services that are not included in this list. There is currently no wild carding or other magic.
 
+## Copyrights
+
+The source has been and is licensed by a MIT [license](LICENCE.md). In other words, do as you please with
+it, but don't think you can hold us liable for any damage caused to or by you if you use it.
 
 ## Rationale for forking
 
+The django-cas project has been rather poorly maintained for some time. The most obviuos changes
+include moving the repo around. Patches supplied by myself in order to support proxy authentication
+and by others for single sign out (http://code.google.com/r/arnaudgrausem-django-cas/) have 
+not been integrated but in fact lost in the repo changes.
+
+Also the django_cas project suffers from dead code, some wierdness and support for really, 
+really old versions of CAS, Python and Django, bogging it down.
