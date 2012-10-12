@@ -1,11 +1,10 @@
-"""Django CAS 1.0/2.0 authentication backend"""
+""" Django CAS 2.0 authentication backend """
 
 from django.conf import settings
 
 __all__ = []
 
 _DEFAULTS = {
-    'CAS_ADMIN_PREFIX': None,
     'CAS_EXTRA_LOGIN_PARAMS': None,
     'CAS_IGNORE_REFERER': False,
     'CAS_LOGOUT_COMPLETELY': True,
