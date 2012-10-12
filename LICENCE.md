@@ -1,8 +1,8 @@
-MIT licence (http://en.wikipedia.org/wiki/MIT_License)
+# MIT licence (http://en.wikipedia.org/wiki/MIT_License)
 
-Copyright (C) 2012 KTH, Royal Institute of Technology (http://www.kth.se/)
-Copyright (C) 2012 Arnaud Grausem
-Copyright (C) 2010 Ed Crewe
+* Copyright (C) 2012 KTH, Royal Institute of Technology (http://www.kth.se/)
+* Copyright (C) 2012 Arnaud Grausem
+* Copyright (C) 2010 Ed Crewe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation

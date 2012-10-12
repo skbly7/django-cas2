@@ -12,6 +12,9 @@ have to look for the django-cas version mentioned above.
 single sign on solution for web applications. [Django](http://www.djangoproject.com/)
 is a Python web application framework.  
 
+More useful detailed information about CAS is the [protocol specification](http://www.jasig.org/cas/protocol)
+and the [CAS Proxy Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough)
+
 ## Installation
 
 Run python setup.py install as per usual or mess with your PYTHONPATH appropriately.
@@ -83,6 +86,8 @@ support also the proxy call back URL, see optional settings below.
 	proxy granting ticket support. The URL must also be registered in urls.py and handled
 	by the django_cas.views.proxy_callback, e.g:
     `(r'^accounts/login/casProxyCallback$', 'django_cas.views.proxy_callback')`
+    See [Proxy CAS Authentication](PROXY_AUTHENTICATION.md) for more information and 
+    trouble shooting hints.
 	
 `CAS_LOGOUT_REQUEST_ALLOWED: ()`
 	TODO: DROP THIS AND ONLY ALLOW SERVER IN CAS_SERVER_URL TO LOGOUT, OR REMOVE COMPLETELY.
