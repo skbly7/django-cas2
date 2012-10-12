@@ -107,7 +107,7 @@ it, but don't think you can hold us liable for any damage caused to or by you if
 The django-cas project has been rather poorly maintained for some time. The most obviuos changes
 include moving the repo around. Patches supplied by myself in order to support proxy authentication
 and by others for single sign out (http://code.google.com/r/arnaudgrausem-django-cas/) have 
-not been integrated but in fact lost in the repo changes.
+not been integrated but are in fact lost in the repo changes.
 
 Also the django_cas project suffers from dead code, some wierdness and support for really, 
 really old versions of CAS, Python and Django, bogging it down.

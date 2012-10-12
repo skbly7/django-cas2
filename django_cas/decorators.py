@@ -1,25 +1,19 @@
 """ Replacement authentication decorators that work around redirection loops """
 
-try:
-    from functools import wraps
-except ImportError:
-    from django.utils.functional import wraps
-
+from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import HttpResponseForbidden, HttpResponseRedirect
-from django.utils.http import urlquote
+from functools import wraps
+from urllib import urlencode
 
-__all__ = ['login_required', 'permission_required', 'user_passes_test']
+__all__ = ['permission_required', 'user_passes_test']
 
-def user_passes_test(test_func, login_url=None,
+def user_passes_test(test_func, 
+                     login_url=settings.LOGIN_URL,
                      redirect_field_name=REDIRECT_FIELD_NAME):
     """Replacement for django.contrib.auth.decorators.user_passes_test that
     returns 403 Forbidden if the user is already logged in.
     """
-
-    if not login_url:
-        from django.conf import settings
-        login_url = settings.LOGIN_URL
 
     def decorator(view_func):
         @wraps(view_func)
@@ -29,9 +23,7 @@ def user_passes_test(test_func, login_url=None,
             elif request.user.is_authenticated():
                 return HttpResponseForbidden('<html><body><h1>Permission denied</h1></body></html>')
             else:
-                path = '%s?%s=%s' % (login_url, redirect_field_name,
-                                     urlquote(request.get_full_path()))
-                return HttpResponseRedirect(path)
+                return HttpResponseRedirect(login_url + '?' + urlencode({redirect_field_name : request.get_full_path()}))
         return wrapper
     return decorator
 
