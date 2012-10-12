@@ -9,11 +9,15 @@ _DEFAULTS = {
     'CAS_EXTRA_LOGIN_PARAMS': None,
     'CAS_IGNORE_REFERER': False,
     'CAS_LOGOUT_COMPLETELY': True,
+    'CAS_SINGLE_SIGN_OUT': True,
     'CAS_REDIRECT_URL': '/',
     'CAS_RETRY_LOGIN': False,
     'CAS_PROXY_CALLBACK': None,
     'CAS_SERVER_URL': None,
     'CAS_VERSION': '2',
+    'CAS_LOGOUT_REQUEST_ALLOWED': (),
+    'CAS_AUTO_CREATE_USERS' : False,
+    'CAS_ALLOWED_PROXIES' : []
 }
 
 for key, value in _DEFAULTS.iteritems():
