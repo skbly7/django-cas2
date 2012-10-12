@@ -16,7 +16,7 @@ def cas_request_logout_allowed(request):
     servers are allowed. Be careful !
     """
     from socket import gethostbyaddr
-    remote_address = request.META.get('REMOTE_ADDR', '')
+    remote_address = request.META.get('REMOTE_ADDR')
     if remote_address:
         try:
             remote_host = gethostbyaddr(remote_address)[0]
@@ -45,8 +45,7 @@ class CASMiddleware(object):
         login URL, as well as calls to django.contrib.auth.views.login and
         logout.
         """
-        if view_func in (login, cas_login) and request.POST.get(
-            'logoutRequest', ''):
+        if view_func in (login, cas_login) and request.POST.get('logoutRequest'):
             if cas_request_logout_allowed(request):
                 return cas_logout(request, *view_args, **view_kwargs)
             return HttpResponseForbidden()
@@ -66,8 +65,7 @@ class CASMiddleware(object):
             if request.user.is_staff:
                 return None
             else:
-                error = ('<h1>Forbidden</h1><p>You do not have staff '
-                         'privileges.</p>')
+                error = ('<h1>Forbidden</h1><p>You do not have staff privileges.</p>')
                 return HttpResponseForbidden(error)
         params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})        
         return HttpResponseRedirect(settings.LOGIN_URL + '?' + params)

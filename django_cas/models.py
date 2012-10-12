@@ -80,7 +80,7 @@ def map_service_ticket(sender, **kwargs):
     """ Creates the mapping between a session key and a service ticket after user
         logged in """
     request = kwargs['request']
-    ticket = request.GET.get('ticket', '')
+    ticket = request.GET.get('ticket')
     if ticket and _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.create(service_ticket=ticket,
@@ -111,7 +111,7 @@ def delete_old_tickets(**kwargs):
     """ Delete tickets if they are over 2 days old 
         kwargs = ['raw', 'signal', 'instance', 'sender', 'created']
     """
-    sender = kwargs.get('sender', None)
+    sender = kwargs.get('sender')
     now = datetime.now()
     expire = datetime(now.year, now.month, now.day) - timedelta(days=2)
     sender.objects.filter(timestamp__lt=expire).delete()
