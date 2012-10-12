@@ -1,6 +1,13 @@
 = Release Notes =
 
-== Version X.X.X ==
+== Version 2.0.3-KTH-11 ==
+
+  * Incorporated support for single sign out. 
+  * Project has since then moved to other repository and all pull requests 
+    seem to be thrown away, so the project seems officially a dead end 
+    for other purposes than the ones intended by the maintainer.
+
+== Version 2.0.3-KTH-10 ==
  
   * Added support for CAS proxy authentication.
 
