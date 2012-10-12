@@ -16,76 +16,13 @@ __all__ = ['CASBackend']
 
 logger = logging.getLogger(__name__)
 
-
-def get_pgtiou(pgt):
-    """ Returns a PgtIOU object given a pgt. 
-    
-        The PgtIOU (tgt) is set by the CAS server in a different request that has 
-        completed before this call, however, it may not be found in the database 
-        by this calling thread, hence the attempt to get the ticket is retried 
-        for up to 5 seconds. This should be handled some better way. 
-    """
-    pgtIou = None
-    retries_left = 5
-    while not pgtIou and retries_left:
-        try:
-            return PgtIOU.objects.get(pgtIou=pgt)
-        except ObjectDoesNotExist:
-            time.sleep(1)
-            retries_left -= 1
-    raise CasTicketException("Could not find pgtIou for pgt %s" % pgt)
-
-def verify(ticket, service):
-    """ Verifies CAS 2.0+ XML-based authentication ticket.
-
-        Returns tuple (username, [proxy URLs]) on success or None on failure.
-    """
-    params = {'ticket': ticket, 'service': service}
-    if settings.CAS_PROXY_CALLBACK:
-        params.update({'pgtUrl': settings.CAS_PROXY_CALLBACK})
-
-    page = urlopen(urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params))
-
-    try:
-        response = minidom.parseString(page.read())
-        if response.getElementsByTagName('cas:authenticationFailure'):
-            logger.warn("Authentication failed from CAS server: %s", 
-                        response.getElementsByTagName('cas:authenticationFailure')[0].firstChild.nodeValue)
-            return (None, None)
-
-        username = response.getElementsByTagName('cas:user')[0].firstChild.nodeValue
-        proxies = []
-        if response.getElementsByTagName('cas:proxyGrantingTicket'):
-            proxies = [p.firstChild.nodeValue for p in response.getElementsByTagName('cas:proxies')]
-            pgt = response.getElementsByTagName('cas:proxyGrantingTicket')[0].firstChild.nodeValue
-            try:
-                pgtIou = get_pgtiou(pgt)
-                tgt = Tgt.objects.get(username = username)
-                tgt.tgt = pgtIou.tgt
-                tgt.save()
-                pgtIou.delete()
-            except ObjectDoesNotExist:
-                Tgt.objects.create(username = username, tgt = pgtIou.tgt)
-                pgtIou.delete()
-            except:
-                logger.error("Failed to do proxy authentication.", exc_info=True)
-
-        logger.debug("Cas proxy authentication succeeded for %s with proxies %s", username, proxies)
-        return (username, proxies)
-    except Exception as e:
-        logger.error("Failed to verify CAS authentication", e)
-        return (None, None)
-    finally:
-        page.close()
-
-
 class CASBackend(ModelBackend):
     """ CAS authentication backend """
 
     def authenticate(self, ticket, service):
         """ Verifies CAS ticket and gets or creates User object """
 
-        (username, proxies) = verify(ticket, service)
+        (username, proxies) = self._verify(ticket, service)
         if not username:
             return None
         
@@ -106,3 +43,66 @@ class CASBackend(ModelBackend):
                 logger.error("Failed authentication, user '%s' does not exist", username)
 
         return None
+
+    
+    def _verify(self, ticket, service):
+        """ Verifies CAS 2.0+ XML-based authentication ticket.
+    
+            Returns tuple (username, [proxy URLs]) on success or None on failure.
+        """
+        params = {'ticket': ticket, 'service': service}
+        if settings.CAS_PROXY_CALLBACK:
+            params.update({'pgtUrl': settings.CAS_PROXY_CALLBACK})
+    
+        page = urlopen(urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params))
+    
+        try:
+            response = minidom.parseString(page.read())
+            if response.getElementsByTagName('cas:authenticationFailure'):
+                logger.warn("Authentication failed from CAS server: %s", 
+                            response.getElementsByTagName('cas:authenticationFailure')[0].firstChild.nodeValue)
+                return (None, None)
+    
+            username = response.getElementsByTagName('cas:user')[0].firstChild.nodeValue
+            proxies = []
+            if response.getElementsByTagName('cas:proxyGrantingTicket'):
+                proxies = [p.firstChild.nodeValue for p in response.getElementsByTagName('cas:proxies')]
+                pgt = response.getElementsByTagName('cas:proxyGrantingTicket')[0].firstChild.nodeValue
+                try:
+                    pgtIou = self.get_pgtiou(pgt)
+                    tgt = Tgt.objects.get(username = username)
+                    tgt.tgt = pgtIou.tgt
+                    tgt.save()
+                    pgtIou.delete()
+                except ObjectDoesNotExist:
+                    Tgt.objects.create(username = username, tgt = pgtIou.tgt)
+                    pgtIou.delete()
+                except:
+                    logger.error("Failed to do proxy authentication.", exc_info=True)
+    
+            logger.debug("Cas proxy authentication succeeded for %s with proxies %s", username, proxies)
+            return (username, proxies)
+        except Exception as e:
+            logger.error("Failed to verify CAS authentication", e)
+            return (None, None)
+        finally:
+            page.close()
+
+
+    def _get_pgtiou(self, pgt):
+        """ Returns a PgtIOU object given a pgt. 
+        
+            The PgtIOU (tgt) is set by the CAS server in a different request that has 
+            completed before this call, however, it may not be found in the database 
+            by this calling thread, hence the attempt to get the ticket is retried 
+            for up to 5 seconds. This should be handled some better way. 
+        """
+        pgtIou = None
+        retries_left = 5
+        while not pgtIou and retries_left:
+            try:
+                return PgtIOU.objects.get(pgtIou=pgt)
+            except ObjectDoesNotExist:
+                time.sleep(1)
+                retries_left -= 1
+        raise CasTicketException("Could not find pgtIou for pgt %s" % pgt)
