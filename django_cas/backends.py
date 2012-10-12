@@ -69,7 +69,7 @@ class CASBackend(ModelBackend):
                 proxies = [p.firstChild.nodeValue for p in response.getElementsByTagName('cas:proxies')]
                 pgt = response.getElementsByTagName('cas:proxyGrantingTicket')[0].firstChild.nodeValue
                 try:
-                    pgtIou = self.get_pgtiou(pgt)
+                    pgtIou = self._get_pgtiou(pgt)
                     tgt = Tgt.objects.get(username = username)
                     tgt.tgt = pgtIou.tgt
                     tgt.save()
