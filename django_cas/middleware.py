@@ -10,7 +10,6 @@ from urllib import urlencode
 
 __all__ = ['CASMiddleware']
 
-
 def cas_request_logout_allowed(request):
     """ Checks if the remote server is allowed to send cas logout request
     If nothing is set in the CAS_LOGOUT_REQUEST_ALLOWED parameter, all remote
@@ -39,6 +38,7 @@ class CASMiddleware(object):
                  "setting to insert 'django.contrib.auth.middleware."
                  "AuthenticationMiddleware'.")
         assert hasattr(request, 'user'), error
+
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         """Forwards unauthenticated requests to the admin page to the CAS
@@ -71,6 +71,7 @@ class CASMiddleware(object):
                 return HttpResponseForbidden(error)
         params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})        
         return HttpResponseRedirect(settings.LOGIN_URL + '?' + params)
+
 
     def process_exception(self, request, exception):
         """When we get a CasTicketException, that is probably caused by the ticket timing out.

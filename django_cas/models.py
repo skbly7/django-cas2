@@ -34,11 +34,13 @@ class Tgt(models.Model):
         finally:
             page.close()
 
+
 class PgtIOU(models.Model):
     """ Proxy granting ticket and IOU """
     pgtIou = models.CharField(max_length = 255, unique = True)
     tgt = models.CharField(max_length = 255)
     timestamp = models.DateTimeField(auto_now = True)
+
 
 class SessionServiceTicket(models.Model):
     """ Handles a mapping between the CAS Service Ticket and the session key
@@ -48,10 +50,12 @@ class SessionServiceTicket(models.Model):
     service_ticket = models.CharField(_('service ticket'), max_length=255, primary_key=True)
     session_key = models.CharField(_('session key'), max_length=40)
 
+
     class Meta:
         db_table = 'django_cas_session_service_ticket'
         verbose_name = _('session service ticket')
         verbose_name_plural = _('session service tickets')
+
 
     def get_session(self):
         """ Searches the session in store and returns it """
@@ -59,14 +63,17 @@ class SessionServiceTicket(models.Model):
         SessionStore = getattr(session_engine, 'SessionStore')
         return SessionStore(session_key=self.session_key)
 
+
     def __unicode__(self):
         return self.ticket
+
 
 def _is_cas_backend(session):
     """ Checks if the auth backend is CASBackend """
     backend = session[BACKEND_SESSION_KEY]
     from django_cas.backends import CASBackend
     return backend == '{0.__module__}.{0.__name__}'.format(CASBackend)
+
 
 @receiver(user_logged_in)
 def map_service_ticket(sender, **kwargs):
@@ -79,6 +86,7 @@ def map_service_ticket(sender, **kwargs):
         SessionServiceTicket.objects.create(service_ticket=ticket,
                                             session_key=session_key)
 
+
 @receiver(user_logged_out)
 def delete_service_ticket(sender, **kwargs):
     """ Deletes the mapping between session key and service ticket after user
@@ -87,6 +95,7 @@ def delete_service_ticket(sender, **kwargs):
     if _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.filter(session_key=session_key).delete()
+
 
 def get_tgt_for(user):
     if not settings.CAS_PROXY_CALLBACK:
@@ -97,6 +106,7 @@ def get_tgt_for(user):
     except Tgt.DoesNotExist:
         raise CasTicketException("no ticket found for user " + user.username)
 
+
 def delete_old_tickets(**kwargs):
     """ Delete tickets if they are over 2 days old 
         kwargs = ['raw', 'signal', 'instance', 'sender', 'created']
@@ -105,5 +115,6 @@ def delete_old_tickets(**kwargs):
     now = datetime.now()
     expire = datetime(now.year, now.month, now.day) - timedelta(days=2)
     sender.objects.filter(timestamp__lt=expire).delete()
+
 
 post_save.connect(delete_old_tickets, sender=PgtIOU)
