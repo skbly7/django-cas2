@@ -27,7 +27,7 @@ def user_passes_test(test_func, login_url=None,
             if test_func(request.user):
                 return view_func(request, *args, **kwargs)
             elif request.user.is_authenticated():
-                return HttpResponseForbidden('<h1>Permission denied</h1>')
+                return HttpResponseForbidden('<html><body><h1>Permission denied</h1></body></html>')
             else:
                 path = '%s?%s=%s' % (login_url, redirect_field_name,
                                      urlquote(request.get_full_path()))
