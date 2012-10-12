@@ -26,13 +26,11 @@ openssl s_client -connect your.proxy.server:443 -verify 3 -pause -showcerts
 
 ## CAS servers which requires callback at root
 
-```
-This was added to the original README by someone. I don't know if it's valid for
-anyone. If it is, your server is broken and does not follow the CAS protocol
-specification, but I keep it here for now.
-
-/Fredrik Jönsson Oct 12 2012.
-``` 
+> This was added to the original README by someone. I don't know if it's valid for
+> anyone. If it is, your server is broken and does not follow the CAS protocol
+> specification, but I keep it here for now.
+>
+> /Fredrik Jönsson Oct 12 2012.
 
 The callback url for some SSO server implementations may need to be at the root
 in this case you will need to add the following to your sites home page view 
