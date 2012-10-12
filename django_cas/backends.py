@@ -1,16 +1,15 @@
 """ CAS authentication backend """
 
 from django.conf import settings
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django_cas.exceptions import CasTicketException
 from django_cas.models import Tgt, PgtIOU
 from urllib import urlencode, urlopen
 from urlparse import urljoin
 from xml.dom import minidom
 import logging
 import time
-from django.contrib.auth.backends import ModelBackend
-from django_cas.exceptions import CasTicketException
 
 __all__ = ['CASBackend']
 
@@ -74,7 +73,7 @@ class CASBackend(ModelBackend):
                     tgt.tgt = pgtIou.tgt
                     tgt.save()
                     pgtIou.delete()
-                except ObjectDoesNotExist:
+                except Tgt.DoesNotExist:
                     Tgt.objects.create(username = username, tgt = pgtIou.tgt)
                     pgtIou.delete()
                 except:
@@ -102,7 +101,7 @@ class CASBackend(ModelBackend):
         while not pgtIou and retries_left:
             try:
                 return PgtIOU.objects.get(pgtIou=pgt)
-            except ObjectDoesNotExist:
+            except PgtIOU.DoesNotExist:
                 time.sleep(1)
                 retries_left -= 1
         raise CasTicketException("Could not find pgtIou for pgt %s" % pgt)
