@@ -1,4 +1,4 @@
-"""Replacement authentication decorators that work around redirection loops"""
+""" Replacement authentication decorators that work around redirection loops """
 
 try:
     from functools import wraps

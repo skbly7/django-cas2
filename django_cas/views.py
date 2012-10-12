@@ -1,4 +1,4 @@
-""" CAS login/logout replacement views """
+""" Django CAS 2.0 authentication login/logout replacement views """
 
 from django.conf import settings
 from django.contrib import auth

@@ -1,4 +1,4 @@
-"""CAS authentication middleware"""
+""" Django CAS 2.0 authentication middleware """
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, logout as do_logout

@@ -1,4 +1,4 @@
-""" CAS authentication backend """
+""" Django CAS 2.0 authentication backend """
 
 from django.conf import settings
 from django.contrib.auth.backends import ModelBackend

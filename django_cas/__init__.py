@@ -1,4 +1,4 @@
-"""Django CAS 1.0/2.0 authentication backend"""
+""" Django CAS 2.0 authentication backend """
 
 from django.conf import settings
 

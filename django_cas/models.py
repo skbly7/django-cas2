@@ -1,3 +1,5 @@
+""" Django CAS 2.0 authentication models """
+
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY
