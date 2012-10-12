@@ -69,12 +69,14 @@ def login(request, next_page=None, required=False):
     if not next_page:
         next_page = _redirect_url(request)
         
-    cas_sso_request = request.POST.get('logoutRequest')
-    if cas_sso_request:
-        request.session = _get_session(cas_sso_request)
-        logger.debug("Got single sign out callback from CAS server for session %s", request.session.session_key)
+    single_sign_out_request = request.POST.get('logoutRequest')
+    if settings.CAS_SINGLE_SIGN_OUT and single_sign_out_request:
+        request.session = _get_session(single_sign_out_request)
+        request.user = auth.get_user(request)
+        logger.debug("Got single sign out callback from CAS for user %s session %s", 
+                     request.user, request.session.session_key)
         auth.logout(request)
-        return HttpResponseRedirect(next_page)
+        return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
         
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)
@@ -93,7 +95,7 @@ def login(request, next_page=None, required=False):
     if settings.CAS_RETRY_LOGIN or required:
         return HttpResponseRedirect(_login_url(service))
 
-    return HttpResponseForbidden("<h1>Forbidden</h1><p>Login failed.</p>")
+    return HttpResponseForbidden("<html><body><h1>Login failed</h1></body></html>")
  
 
 def _get_session(logout_response):

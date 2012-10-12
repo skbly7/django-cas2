@@ -9,6 +9,7 @@ _DEFAULTS = {
     'CAS_EXTRA_LOGIN_PARAMS': None,
     'CAS_IGNORE_REFERER': False,
     'CAS_LOGOUT_COMPLETELY': True,
+    'CAS_SINGLE_SIGN_OUT': True,
     'CAS_REDIRECT_URL': '/',
     'CAS_RETRY_LOGIN': False,
     'CAS_PROXY_CALLBACK': None,
