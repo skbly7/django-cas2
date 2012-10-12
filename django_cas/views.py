@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.contrib import auth
 from django.http import HttpResponseRedirect, HttpResponseForbidden, \
-    HttpResponse
+    HttpResponse, HttpResponseNotFound
 from django_cas.models import PgtIOU, SessionServiceTicket
 from urllib import urlencode
 from urlparse import urljoin
@@ -72,6 +72,8 @@ def login(request, next_page=None, required=False):
     single_sign_out_request = request.POST.get('logoutRequest')
     if settings.CAS_SINGLE_SIGN_OUT and single_sign_out_request:
         request.session = _get_session(single_sign_out_request)
+        if not request.session:
+            return HttpResponseNotFound('<html><body><h1>No Such Session</h1></body></hmtl>')
         request.user = auth.get_user(request)
         logger.debug("Got single sign out callback from CAS for user %s session %s", 
                      request.user, request.session.session_key)
@@ -107,9 +109,11 @@ def _get_session(logout_response):
         ticket = response.getElementsByTagName('samlp:SessionIndex')[0].firstChild.nodeValue
         sst = SessionServiceTicket.objects.get(pk=ticket)
         return sst.get_session()
+    except SessionServiceTicket.DoesNotExist:
+        logger.info("No session matching single sign out request: %s", ticket)        
     except Exception as e:
         logger.error("Unable to parse logout response from server: %s", e)
-        return None
+    return None
 
 
 def logout(request, next_page=None):
