@@ -52,13 +52,9 @@ class CASMiddleware(object):
 
         if view_func == login:
             return cas_login(request, *view_args, **view_kwargs)
-        elif view_func == logout:
+        if view_func == logout:
             return cas_logout(request, *view_args, **view_kwargs)
-
-        if settings.CAS_ADMIN_PREFIX:
-            if not request.path.startswith(settings.CAS_ADMIN_PREFIX):
-                return None
-        elif not view_func.__module__.startswith('django.contrib.admin.'):
+        if not view_func.__module__.startswith('django.contrib.admin.'):
             return None
 
         if request.user.is_authenticated():
