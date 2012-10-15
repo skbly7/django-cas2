@@ -18,6 +18,8 @@ and the [CAS Proxy Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Wal
 ## Installation
 
 Run python setup.py install as per usual or mess with your PYTHONPATH appropriately.
+Use the master branch for the latest stable version or the pre built source tar-balls
+in the downloads section.
 
 ### Django configuration
 
@@ -61,28 +63,11 @@ Mandatory. The URL for the CAS server.
 
 #### Optional settings
 
-`CAS_EXTRA_LOGIN_PARAMS: None`
-
-> Not quite sure what the purpose for this is, anyone using it? 
-> /Fredrik Jönsson Oct 15 2012
-
-A dictionary of extra URL parameters to add to the login URL when redirecting the user.
-
 `CAS_RENEW: False`
 
 If `True`, enables the renew feature of CAS, sending renew parameter on login
 and verification of tickets to enforce that the login is made with a fresh
 username and password verification in the CAS server.
-
-`CAS_LOGOUT_COMPLETELY: True`
-
-If `True`, redirect and do a CAS logout when user logs out of the Django application.
-It is in most cases pointless to turn this off unless CAS_RENEW is set. 
-
-`CAS_SINGLE_SIGN_OUT: True`
-
-If `True`, support single sign out reqeusts form the CAS server and sign out of the
-Django application when a user signs out of CAS.
 
 `CAS_REDIRECT_URL: '/'`
 
@@ -97,28 +82,55 @@ If `True`, logging out of the application will always send the user to the URL s
 
 If `True`, redirect back to CAS server if CAS authentication fails.
 
-`CAS_PROXY_CALLBACK: None`
-
-The callback URL the CAS server should use to inject proxy tickets. Setting this enables
-proxy granting ticket support. The URL must also be registered in urls.py and handled
-by the django_cas.views.proxy_callback, e.g:
-`(r'^accounts/login/casProxyCallback$', 'django_cas.views.proxy_callback')`
-See [Proxy CAS Authentication](https://github.com/fjollberg/django-cas2/PROXY_AUTHENTICATION.md)
-for more information and trouble shooting hints.
-	
 `CAS_AUTO_CREATE_USERS : False`
 
 If `True`, automatically create accounts for authenticated users which don't have one. This
 is a change in behavior from the original django-cas module which hade no such option and
 auto created users.
 
+`CAS_LOGOUT_COMPLETELY: True`
+
+If `True`, redirect and do a CAS logout when user logs out of the Django application.
+It is in most cases pointless to turn this off unless CAS_RENEW is set. 
+
+`CAS_SINGLE_SIGN_OUT: True`
+
+If `True`, support single sign out reqeusts form the CAS server and sign out of the
+Django application when a user signs out of CAS.
+
+`CAS_PROXY_CALLBACK: None`
+
+The callback URL the CAS server should use to inject proxy tickets. Setting this enables
+proxy granting ticket support. The URL must also be registered in urls.py and handled
+by the django_cas.views.proxy_callback, e.g:
+`(r'^accounts/login/casProxyCallback$', 'django_cas.views.proxy_callback')`
+See [Proxy CAS Authentication](./PROXY_AUTHENTICATION.md)
+for more information and trouble shooting hints.
+	
 `CAS_ALLOWED_PROXIES : []`
 
 A list of URLs of proxies that are allowed to proxy authenticate to the Django application.
 If set, the proxy chain provided by the CAS server in the validation response must not contain
 services that are not included in this list. There is currently no wild carding or other magic.
 
+`CAS_EXTRA_LOGIN_PARAMS: None`
+
+> Not quite sure what the purpose for this is, anyone using it? How? I'm tempted to 
+> remove it since it is outside of the protocol specification, but I can think of some 
+> possible use cases, the question is if someone is using it?
+> /Fredrik Jönsson Oct 15 2012
+
+A dictionary of extra URL parameters to add to the login URL when redirecting the user.
+
 ## Security considerations
+
+### Use SSL/TLS
+
+Even if the authentication with CAS is made using a mechanism which makes
+it difficult to interfere with, all authorized communication will subsequentely use
+a cookie identifing the session which can be used to hijack the connection.
+So you need to encrypt the communication. There is just no way around that if you
+want to enforce some sort of security.
 
 ### Single sign out
 
@@ -126,7 +138,7 @@ There was in the applied single-sign-out patch, and in the 1.0 release of this p
 a setting with which you could list hosts which where allowed to do the single sign out
 call to the application, CAS_LOGOUT_REQUEST_ALLOWED. This is removed in 1.1. As it was
 implemented it did not work in a number of situations, and my belief is that it suggested
-security that it doesn't really provide.
+security that it didn't really provide.
 
 The recommendation instead is that if you have conserns with the possibility of denial
 of service attacks caused by faked logout requests with compromised CAS session tickets, 
@@ -150,9 +162,16 @@ address resolving routines of the server host. This is in itself fraught with a 
 of issues, and does not work well for proxied applications. Some of these deficits could
 be worked around by additional code.
 
+## Development
+
+This project uses git and git flow style branching. Hence, the master branch is the 
+stable release branch, and development is done on the development branch. For more 
+information about the branch model see http://nvie.com/posts/a-successful-git-branching-model/.
+For the `git flow` command line tool, see https://github.com/nvie/gitflow.
+
 ## Copyrights
 
-The source has been and is licensed by a MIT [license](https://github.com/fjollberg/django-cas2/LICENCE.md).
+The source has been and is licensed by a MIT [license](./LICENCE.md).
 In other words, do as you please with it, but don't think you can hold us liable for any damage caused
 to or by you if you use it.
 
