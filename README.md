@@ -4,9 +4,9 @@ django-cas2
 CAS 2.0 authentication module for Django with support for proxy authentication
 and single sign out. This project is a fork and rewrite of the original django-cas
 module which is found at https://bitbucket.org/cpcc/django-cas/ as of this writing.
-It is a drop-in replacement for most cases, but support for old versions of Python
-and Django is removed and in the case you need this (you really shouldn't) you
-have to look for the django-cas version mentioned above. 
+It is a drop-in replacement for most cases, but support for very old versions of CAS, 
+Python and Django is removed and in the case you need this (you really shouldn't) 
+you have to look for the django-cas version mentioned above. 
 
 [CAS](http://www.jasig.org/cas), Central Authentication Server, is an open source, 
 single sign on solution for web applications. [Django](http://www.djangoproject.com/)
@@ -55,7 +55,7 @@ support also the proxy call back URL, see optional settings below.
 
 #### Mandatory setting
 
-`CAS_SERVER_URL: None`,
+`CAS_SERVER_URL: None`
 
 Mandatory. The URL for the CAS server.
 
