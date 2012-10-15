@@ -1,7 +1,7 @@
 Release Notes
 -------------
 
-## Version KTH-1.1
+## Version KTH-1.1.0
 
 * Add CAS_RENEW setting to enforce CAS renew feature. See [README](./README.md)
   regarding this setting and CAS_LOGOUT_COMPLETELY.
