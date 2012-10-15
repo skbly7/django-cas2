@@ -65,22 +65,26 @@ def _logout_url(request, next_page=None):
     return logout_url
 
 
+def _single_sign_out(request):
+    single_sign_out_request = request.POST.get('logoutRequest')
+    request.session = _get_session(single_sign_out_request)
+    if not request.session:
+        return HttpResponseNotFound('<html><body><h1>No Such Session</h1></body></hmtl>')
+    request.user = auth.get_user(request)
+    logger.debug("Got single sign out callback from CAS for user %s session %s", 
+                 request.user, request.session.session_key)
+    auth.logout(request)
+    return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
+    
+
 def login(request, next_page=None, required=False):
     """ Forwards to CAS login URL or verifies CAS ticket. """
 
+    if settings.CAS_SINGLE_SIGN_OUT and request.POST.get('logoutRequest'):
+        return _single_sign_out(request)
+        
     if not next_page:
         next_page = _redirect_url(request)
-        
-    single_sign_out_request = request.POST.get('logoutRequest')
-    if settings.CAS_SINGLE_SIGN_OUT and single_sign_out_request:
-        request.session = _get_session(single_sign_out_request)
-        if not request.session:
-            return HttpResponseNotFound('<html><body><h1>No Such Session</h1></body></hmtl>')
-        request.user = auth.get_user(request)
-        logger.debug("Got single sign out callback from CAS for user %s session %s", 
-                     request.user, request.session.session_key)
-        auth.logout(request)
-        return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
         
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)

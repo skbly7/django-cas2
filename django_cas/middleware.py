@@ -10,39 +10,6 @@ from urllib import urlencode
 
 __all__ = ['CASMiddleware']
 
-def cas_request_logout_allowed(request):
-    """ Checks if the remote server is allowed to send cas logout request.
-        If nothing is set in the CAS_LOGOUT_REQUEST_ALLOWED parameter, all remote
-        servers are allowed. Be careful!
-        
-        This does not really work that well for a number of scenarios, including
-        when the service is proxied into another web space, in which case 
-        X-FORWARDED-FOR may be present instead, or not. Trusting DNS reverse lookup 
-        in order to implement 'security' is not really recommended practise.
-        
-        The security threat handled here is that someone could intercept service
-        tickets somehow and use these to logout users. Taken to the extreme,
-        this could make out a DOS attack of sorts. The service tickets are short-lived
-        for authentication purposes, but long-lived used for single sign out.
-        
-        But there are a number of other threats that could be used this way, including
-        the django session itself which is much more exposed than the service ticket.
-    """
-    if not settings.CAS_LOGOUT_REQUEST_ALLOWED: 
-        return True
-
-    if not request.META.get('REMOTE_ADDR'):
-        return False
-
-    try:
-        from socket import gethostbyaddr
-        remote_host = gethostbyaddr(request.META.get('REMOTE_ADDR'))[0]
-    except:
-        return False
-    allowed_hosts = settings.CAS_LOGOUT_REQUEST_ALLOWED
-    return remote_host in allowed_hosts
-
-
 class CASMiddleware(object):
     """Middleware that allows CAS authentication on admin pages"""
 
@@ -61,11 +28,6 @@ class CASMiddleware(object):
             login URL, as well as calls to django.contrib.auth.views.login and
             logout.
         """
-        if view_func in (login, cas_login) and request.POST.get('logoutRequest'):
-            if cas_request_logout_allowed(request):
-                return cas_logout(request, *view_args, **view_kwargs)
-            return HttpResponseForbidden()
-
         if view_func == login:
             return cas_login(request, *view_args, **view_kwargs)
         if view_func == logout:

@@ -15,7 +15,6 @@ _DEFAULTS = {
     'CAS_PROXY_CALLBACK': None,
     'CAS_SERVER_URL': None,
     'CAS_VERSION': '2',
-    'CAS_LOGOUT_REQUEST_ALLOWED': (),
     'CAS_AUTO_CREATE_USERS' : False,
     'CAS_ALLOWED_PROXIES' : []
 }

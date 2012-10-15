@@ -106,10 +106,6 @@ by the django_cas.views.proxy_callback, e.g:
 See [Proxy CAS Authentication](https://github.com/fjollberg/django-cas2/PROXY_AUTHENTICATION.md)
 for more information and trouble shooting hints.
 	
-`CAS_LOGOUT_REQUEST_ALLOWED: ()`
-
-TODO: DROP THIS AND ONLY ALLOW SERVER IN CAS_SERVER_URL TO LOGOUT, OR REMOVE COMPLETELY.
-
 `CAS_AUTO_CREATE_USERS : False`
 
 If `True`, automatically create accounts for authenticated users which don't have one. This
@@ -121,6 +117,38 @@ auto created users.
 A list of URLs of proxies that are allowed to proxy authenticate to the Django application.
 If set, the proxy chain provided by the CAS server in the validation response must not contain
 services that are not included in this list. There is currently no wild carding or other magic.
+
+## Security considerations
+
+### Single sign out
+
+There was in the applied single-sign-out patch, and in the 1.0 release of this project
+a setting with which you could list hosts which where allowed to do the single sign out
+call to the application, CAS_LOGOUT_REQUEST_ALLOWED. This is removed in 1.1. As it was
+implemented it did not work in a number of situations, and my belief is that it suggested
+security that it doesn't really provides.
+
+The recommendation instead is that if you have conserns with the possibility of denial
+of service attacks caused by faked logout requests with compromised CAS session tickets, 
+you should turn single sign out support of completely, using CAS_SINGLE_SIGN_OUT = False. 
+
+The issue at hand is that if someone intercepts your service ticket, it can be used to
+logout the user from the application at a later point. In this sense, the CAS service ticket
+has a long life, wheras it otherwise has a very short life span for authentication. The 
+service ticket is sent as an URL parameter and thus generally more exposed (for example
+in access logging) than most other authentication data.
+
+The only likely place the service ticket is more exposed than other relevant data, say
+the django session, is in the access log files. The possibly increased risk is thus if
+the log files are more easily accessible than other harmful data, such as the database, 
+or provides another vector of attack. The possible effect of this risk is that users
+could be logged out, causing a kind of denial of service.
+
+The CAS_LOGOUT_REQUEST_ALLOWED amended this effect to some extent by given the remote
+address in the request, only allow hosts with the correct address as reported by the 
+address resolving routines of the server host. This is in itself frauhgt with a number
+of issues, and does not work well for proxied applications. Some of these deficits could
+be worked around by additional code.
 
 ## Copyrights
 
