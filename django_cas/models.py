@@ -109,6 +109,7 @@ def get_tgt_for(user):
         raise CasTicketException("no ticket found for user " + user.username)
 
 
+@receiver(post_save, sender=PgtIOU)
 def delete_old_tickets(**kwargs):
     """ Delete tickets if they are over 2 days old 
         kwargs = ['raw', 'signal', 'instance', 'sender', 'created']
@@ -117,6 +118,3 @@ def delete_old_tickets(**kwargs):
     now = datetime.now()
     expire = datetime(now.year, now.month, now.day) - timedelta(days=2)
     sender.objects.filter(timestamp__lt=expire).delete()
-
-
-post_save.connect(delete_old_tickets, sender=PgtIOU)
