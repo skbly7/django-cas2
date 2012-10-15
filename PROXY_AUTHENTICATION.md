@@ -43,7 +43,9 @@ in INSTALLED_APPS in your Django settings (settings.py) Or, You can install the 
 pip install -e git+git://github.com/jaylett/django_concurrent_test_server.git#egg=django_concurrent_test_server
 ```
 
-The server works pretty much as the normal test server and you start the server with:
+The server works pretty much as the normal test server and you start the server with the 0.0.0.0
+address to allow connections on any IP address and not just the local host (127.0.0.1) which is
+default.
 ```
 python manage.py runconcurrentserver 0.0.0.0:8000
 ```
@@ -73,7 +75,8 @@ key = /path/to/certs/xxx.org.key
 sslVersion=all
 ```
 
-Then start stunnel as root.
+Then start stunnel as root if you want to serve on the 443 port. You could
+choose a higher port number and configure your system accordingly instead.
 ```
 sudo stunnel stunnel.conf
 ```
