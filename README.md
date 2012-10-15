@@ -52,6 +52,7 @@ support also the proxy call back URL, see optional settings below.
 ...
 ```
 
+Create necessary database tables with the Django management command `python manage.py syncdb`.
 
 ### Configuration options for django-cas2
 
