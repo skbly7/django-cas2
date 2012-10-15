@@ -1,6 +1,13 @@
 Release Notes
 -------------
 
+## Version KTH-1.1.0
+
+* Add CAS_RENEW setting to enforce CAS renew feature. See [README](./README.md)
+  regarding this setting and CAS_LOGOUT_COMPLETELY.
+* Dropped the CAS_LOGOUT_REQUEST_ALLOWED setting. It implicated in my view 
+  security it didn't really provide. See [README](./README.md) for more information.
+
 ## Version KTH-1.0
  
 * Completed fork of project.
