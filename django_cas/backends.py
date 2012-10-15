@@ -52,6 +52,8 @@ class CASBackend(ModelBackend):
         params = {'ticket': ticket, 'service': service}
         if settings.CAS_PROXY_CALLBACK:
             params.update({'pgtUrl': settings.CAS_PROXY_CALLBACK})
+        if settings.CAS_RENEW:
+            params.update({'renew': 'true'})
     
         page = urlopen(urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' + urlencode(params))
     

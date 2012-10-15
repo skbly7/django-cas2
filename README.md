@@ -63,12 +63,21 @@ Mandatory. The URL for the CAS server.
 
 `CAS_EXTRA_LOGIN_PARAMS: None`
 
+> Not quite sure what the purpose for this is, anyone using it? 
+> /Fredrik Jönsson Oct 15 2012
+
 A dictionary of extra URL parameters to add to the login URL when redirecting the user.
-Ex: CAS_EXTRA_LOGIN_PARAMS = {'renew' : 'true'}
+
+`CAS_RENEW: False`
+
+If `True`, enables the renew feature of CAS, sending renew parameter on login
+and verification of tickets to enforce that the login is made with a fresh
+username and password verification in the CAS server.
 
 `CAS_LOGOUT_COMPLETELY: True`
 
 If `True`, redirect and do a CAS logout when user logs out of the Django application.
+It is in most cases pointless to turn this off unless CAS_RENEW is set. 
 
 `CAS_SINGLE_SIGN_OUT: True`
 
