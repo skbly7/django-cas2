@@ -169,6 +169,10 @@ stable release branch, and development is done on the development branch. For mo
 information about the branch model see http://nvie.com/posts/a-successful-git-branching-model/.
 For the `git flow` command line tool, see https://github.com/nvie/gitflow.
 
+Version numbering follows the [Semantic versioning](http://semver.org) approach.
+A 'KTH-' prefix is currently applied to the version number to distinguish this project
+from the original django_cas project derivatives for the time being, see further below.
+
 ## Copyrights
 
 The source has been and is licensed by a MIT [license](./LICENCE.md).
@@ -186,4 +190,4 @@ Also the django_cas project suffers from dead code, some wierdness and support f
 really old versions of CAS, Python and Django, bogging it down.
 
 The module is still called django_cas for the time being, the rationale being that it is
-a drop-in replacement and I don't want to handle the migrations issues in the database for now.
+a drop-in replacement and I don't want to handle migrations issues in the database as yet.
