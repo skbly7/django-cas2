@@ -126,7 +126,7 @@ There was in the applied single-sign-out patch, and in the 1.0 release of this p
 a setting with which you could list hosts which where allowed to do the single sign out
 call to the application, CAS_LOGOUT_REQUEST_ALLOWED. This is removed in 1.1. As it was
 implemented it did not work in a number of situations, and my belief is that it suggested
-security that it doesn't really provides.
+security that it doesn't really provide.
 
 The recommendation instead is that if you have conserns with the possibility of denial
 of service attacks caused by faked logout requests with compromised CAS session tickets, 
@@ -146,7 +146,7 @@ could be logged out, causing a kind of denial of service.
 
 The CAS_LOGOUT_REQUEST_ALLOWED amended this effect to some extent by given the remote
 address in the request, only allow hosts with the correct address as reported by the 
-address resolving routines of the server host. This is in itself frauhgt with a number
+address resolving routines of the server host. This is in itself fraught with a number
 of issues, and does not work well for proxied applications. Some of these deficits could
 be worked around by additional code.
 
