@@ -1,7 +1,7 @@
 """ Django CAS 2.0 authentication middleware """
 
 from django.conf import settings
-from django.contrib.auth import REDIRECT_FIELD_NAME, logout as do_logout
+from django.contrib import auth
 from django.contrib.auth.views import login, logout
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -44,7 +44,7 @@ class CASMiddleware(object):
                 return None
             else:
                 raise PermissionDenied("No staff priviliges")
-        params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})        
+        params = urlencode({auth.REDIRECT_FIELD_NAME: request.get_full_path()})        
         return HttpResponseRedirect(settings.LOGIN_URL + '?' + params)
 
 
@@ -52,7 +52,7 @@ class CASMiddleware(object):
         """ When we get a CasTicketException it is probably caused by the ticket timing out.
             So logout and get the same page again."""
         if isinstance(exception, CasTicketException):
-            do_logout(request)
+            auth.logout(request)
             return HttpResponseRedirect(request.path)
         else:
             return None
