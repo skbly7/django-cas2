@@ -3,27 +3,51 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY
+from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import ugettext_lazy as _
-from django_cas.exceptions import CasTicketException, CasConfigException
+from django_cas.exceptions import CasTicketException
 from urllib import urlencode, urlopen
 from urlparse import urljoin
 from xml.dom import minidom
 
+__all__ = ['Tgt']
+
 class Tgt(models.Model):
+    """
+    Model representing CAS ticket granting tickets. It can be used
+    to retrieve proxy granting tickets for backend web services 
+    """
     username = models.CharField(max_length = 255, unique = True)
     tgt = models.CharField(max_length = 255)
 
-    def get_proxy_ticket_for(self, service):
-        """ Verifies CAS 2.0+ XML-based authentication ticket.
 
-            Returns username on success and None on failure.
+    @classmethod
+    def get_tgt_for_user(self, user):
+        """
+        Returns the ticket granting ticket stored for a user in the database.
+
+        The user can be specified as a User object or its Django username.
+        Raises Tgt.DoesNotExist if the ticket can't be found.
+        """
+        if isinstance(user, User):
+            return Tgt.objects.get(username = user.username)
+        return Tgt.objects.get(username = user)
+
+
+    def get_proxy_ticket_for_service(self, service):
+        """
+        Returns a string representing a proxy ticket for the given service as
+        given by the CAS server. This ticket can then be used to authenticate
+        to the backend service, typically in a 'ticket' parameter, but may
+        be in other manners detailed by the service specification.
         """
         if not settings.CAS_PROXY_CALLBACK:
-            raise CasConfigException("No proxy callback set in settings")
+            raise ImproperlyConfigured("No proxy callback set in settings")
 
         params = {'pgt': self.tgt, 'targetService': service}
         page = urlopen(urljoin(settings.CAS_SERVER_URL, 'proxy') + '?' + urlencode(params))
@@ -97,16 +121,6 @@ def delete_service_ticket(sender, **kwargs):
     if _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.filter(session_key=session_key).delete()
-
-
-def get_tgt_for(user):
-    if not settings.CAS_PROXY_CALLBACK:
-        raise CasConfigException("No proxy callback set in settings")
-
-    try:
-        return Tgt.objects.get(username = user.username)
-    except Tgt.DoesNotExist:
-        raise CasTicketException("no ticket found for user " + user.username)
 
 
 @receiver(post_save, sender=PgtIOU)
