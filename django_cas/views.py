@@ -77,8 +77,11 @@ def _single_sign_out(request):
                  request.user, request.session.session_key)
     auth.logout(request)
     return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
-    
 
+    
+# TODO: What is 'required' and when is it ever used? I think it is BS.
+# TODO: Same goes for 'next_page'.
+# /Fredrik Jönsson 2012-10-17
 def login(request, next_page=None, required=False):
     """ Forwards to CAS login URL or verifies CAS ticket. """
 
@@ -107,8 +110,6 @@ def login(request, next_page=None, required=False):
         auth.login(request, user)
         return HttpResponseRedirect(next_page)
     
-    # TODO: What is 'required' and when is it ever used? I think it is BS.
-    # /Fredrik Jönsson 2012-10-17
     if settings.CAS_RETRY_LOGIN or required:
         return HttpResponseRedirect(_login_url(service))
 
@@ -131,6 +132,8 @@ def _get_session(logout_response):
     return None
 
 
+# TODO: What is 'next_page' here and when is it ever used? I think it is BS.
+# /Fredrik Jönsson 2012-10-17
 def logout(request, next_page=None):
     """ Redirects to CAS logout page. """
 
