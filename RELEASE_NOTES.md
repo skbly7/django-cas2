@@ -12,7 +12,7 @@ Release Notes
   ```
   from django.contrib.auth.decorators import permission_required
   
-  @permission_required(raise_exception=True)
+  @permission_required('some.permission', raise_exception=True)
   def view_function():
       ...
   ```
