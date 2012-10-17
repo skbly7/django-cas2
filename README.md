@@ -70,15 +70,6 @@ If `True`, enables the renew feature of CAS, sending renew parameter on login
 and verification of tickets to enforce that the login is made with a fresh
 username and password verification in the CAS server.
 
-`CAS_GATEWAY: False`
-
-If `True`, enables the gateway feature of CAS, enforcing a non-interactive authorization
-by CAS. In other words, a user will not be presented with a login screen if not signed
-into CAS, but redirected to the service URL with not ticket. This is useful for backend
-web services that are not directly accessed by users. This option in CAS is fundmentally
-incompatible with the renew feature mentioned above, hence CAS_GATEWAY will be silently
-ignored and no gateway option sent to the CAS server if CAS_RENEW is set.
-
 `CAS_REDIRECT_URL: '/'`
 
 Default URL to redirect to after login and logout when there is no referrer or next
