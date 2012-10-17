@@ -1,6 +1,8 @@
 Release Notes
 -------------
 
+## Version KTH-1.2.0
+
 * Dropped 'next_page' and 'required' parameters from views.login and
   'next_page' from views.logout. I did not see a proper use case for these
   parameters and will regard these as undocumented private features,
