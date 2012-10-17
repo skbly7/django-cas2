@@ -12,7 +12,7 @@ Release Notes
   @permission_required(raise_exception=True)
   def view_function():
       ...
-  ``
+  ```
   If you need this decorator, upgrade to Django 1.4 if you haven't already.
 
 ## Version KTH-1.2.0
