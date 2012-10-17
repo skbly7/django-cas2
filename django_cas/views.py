@@ -3,16 +3,24 @@
 from django.conf import settings
 from django.contrib import auth
 from django.http import HttpResponseRedirect, HttpResponseForbidden, \
-    HttpResponse, HttpResponseNotFound
+    HttpResponse, Http404
 from django_cas.models import PgtIOU, SessionServiceTicket
 from urllib import urlencode
 from urlparse import urljoin
 from xml.dom import minidom
 import logging
+import types
 
 __all__ = ['login', 'logout', 'proxy_callback']
 
 logger = logging.getLogger(__name__)
+
+# Work around for UnicodeEncodeErrors. 
+def _fix_encoding(x):
+    if type(x) is types.UnicodeType:
+        return x.encode('utf-8');
+    return x
+
 
 def _service(request):
     """ Returns service host URL as derived from request """
@@ -20,7 +28,7 @@ def _service(request):
     return ('http://', 'https://')[request.is_secure()] + request.get_host()
 
 
-def _service_url(request, redirect_to=None):
+def _service_url(request, redirect_to):
     """ Returns application service URL for CAS. """
     
     service = _service(request) + request.path
@@ -36,12 +44,12 @@ def _redirect_url(request):
     """ Redirects to referring page, or CAS_REDIRECT_URL if no referrer. """
 
     if request.GET.get(auth.REDIRECT_FIELD_NAME):
-        return request.GET.get(auth.REDIRECT_FIELD_NAME)
+        return _fix_encoding(request.GET.get(auth.REDIRECT_FIELD_NAME))
     
     if settings.CAS_IGNORE_REFERER:
         return settings.CAS_REDIRECT_URL
 
-    return request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL)
+    return _fix_encoding(request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL))
 
 
 def _login_url(service):
@@ -55,7 +63,7 @@ def _login_url(service):
     return urljoin(settings.CAS_SERVER_URL, 'login') + '?' + urlencode(params)
 
 
-def _logout_url(request, next_page=None):
+def _logout_url(request, next_page):
     """ Returns a CAS logout URL """
 
     logout_url = urljoin(settings.CAS_SERVER_URL, 'logout')
@@ -68,24 +76,21 @@ def _logout_url(request, next_page=None):
 def _single_sign_out(request):
     single_sign_out_request = request.POST.get('logoutRequest')
     request.session = _get_session(single_sign_out_request)
-    if not request.session:
-        return HttpResponseNotFound('<html><body><h1>No Such Session</h1></body></hmtl>')
     request.user = auth.get_user(request)
     logger.debug("Got single sign out callback from CAS for user %s session %s", 
                  request.user, request.session.session_key)
     auth.logout(request)
-    return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
-    
+    return HttpResponse()
 
-def login(request, next_page=None, required=False):
+    
+def login(request):
     """ Forwards to CAS login URL or verifies CAS ticket. """
 
     if settings.CAS_SINGLE_SIGN_OUT and request.POST.get('logoutRequest'):
         return _single_sign_out(request)
         
-    if not next_page:
-        next_page = _redirect_url(request)
-        
+    next_page = _redirect_url(request)
+
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)
 
@@ -100,7 +105,7 @@ def login(request, next_page=None, required=False):
         auth.login(request, user)
         return HttpResponseRedirect(next_page)
     
-    if settings.CAS_RETRY_LOGIN or required:
+    if settings.CAS_RETRY_LOGIN:
         return HttpResponseRedirect(_login_url(service))
 
     return HttpResponseForbidden("<html><body><h1>Login failed</h1></body></html>")
@@ -119,15 +124,14 @@ def _get_session(logout_response):
         logger.info("No session matching single sign out request: %s", ticket)        
     except Exception as e:
         logger.error("Unable to parse logout response from server: %s", e)
-    return None
+    raise Http404
 
 
-def logout(request, next_page=None):
+def logout(request):
     """ Redirects to CAS logout page. """
 
     auth.logout(request)
-    if not next_page:
-        next_page = _redirect_url(request)
+    next_page = _redirect_url(request)
     if settings.CAS_LOGOUT_COMPLETELY:
         return HttpResponseRedirect(_logout_url(request, next_page))
     else:

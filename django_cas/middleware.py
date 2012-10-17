@@ -32,9 +32,9 @@ class CASMiddleware(object):
             return cas_login(request, *view_args, **view_kwargs)
         if view_func == logout:
             return cas_logout(request, *view_args, **view_kwargs)
-
-        # TODO: should this really be the concern of a CAS middleware?
-        # /fjo 2012-10-13
+        
+        # The rest of this method amends the Django admin authorization wich
+        # will post a username/password dialog to authenticate to django admin.
         if not view_func.__module__.startswith('django.contrib.admin.'):
             return None
 

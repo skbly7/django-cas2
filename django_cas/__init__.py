@@ -7,6 +7,7 @@ __all__ = []
 _DEFAULTS = {
     'CAS_EXTRA_LOGIN_PARAMS': None,
     'CAS_RENEW': False,
+    'CAS_GATEWAY': False,
     'CAS_IGNORE_REFERER': False,
     'CAS_LOGOUT_COMPLETELY': True,
     'CAS_SINGLE_SIGN_OUT': True,

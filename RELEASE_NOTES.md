@@ -1,6 +1,15 @@
 Release Notes
 -------------
 
+## Version KTH-1.2.0
+
+* Dropped 'next_page' and 'required' parameters from views.login and
+  'next_page' from views.logout. I did not see a proper use case for these
+  parameters and will regard these as undocumented private features,
+  hence only a minor version number bump.
+* Fix possible UnicodeEncodeErrors in GET parameters. The only actual
+  case I've seen of actually using the parameters mentioned above.
+
 ## Version KTH-1.1.0
 
 * Add CAS_RENEW setting to enforce CAS renew feature. See [README](./README.md)
