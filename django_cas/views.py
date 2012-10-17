@@ -35,7 +35,7 @@ def _service_url(request, redirect_to):
 
     params = {}
     if settings.CAS_GATEWAY:
-        params.update({'cas_gw': '1'})
+        params.update({settings.CAS_GATEWAY_PARAM: '1'})
     if redirect_to:
         params.update({auth.REDIRECT_FIELD_NAME: redirect_to})
 
@@ -106,7 +106,7 @@ def login(request):
     service = _service_url(request, next_page)
     ticket = request.GET.get('ticket')
 
-    if settings.CAS_GATEWAY and request.GET.pop('cas_gw') and not ticket:
+    if settings.CAS_GATEWAY and request.GET.get(settings.CAS_GATEWAY_PARAM) and not ticket:
         raise PermissionDenied()
     
     if not ticket:

@@ -64,6 +64,16 @@ Mandatory. The URL for the CAS server.
 
 #### Optional settings
 
+`CAS_LOGOUT_COMPLETELY: True`
+
+If `True`, redirect and do a CAS logout when user logs out of the Django application.
+It is in most cases pointless to turn this off unless CAS_RENEW is set. 
+
+`CAS_SINGLE_SIGN_OUT: True`
+
+If `True`, support single sign out reqeusts form the CAS server and sign out of the
+Django application when a user signs out of CAS.
+
 `CAS_RENEW: False`
 
 If `True`, enables the renew feature of CAS, sending renew parameter on login
@@ -79,9 +89,11 @@ web services that are not directly accessed by users. This option in CAS is fund
 incompatible with the renew feature mentioned above, hence CAS_GATEWAY will be silently
 ignored and no gateway option sent to the CAS server if CAS_RENEW is set.
 
-NOTE: setting CAS_GATEWAY will add a 'cas_gw=1' parameter to the service URL to identify
-failed gateway requests as such, possibly interfering with any existing parameter with
-that name.
+NOTE: setting CAS_GATEWAY will add a parameter, 'casgw', to the service URL to identify
+failed gateway requests as such. It is a part of the inner workings of django_cas and 
+not apublic property, but it may interfere with any existing parameter with the same
+name used by your Django application. The name hence configurable by setting
+`CAS_GATEWAY_PARAM`.
 
 `CAS_REDIRECT_URL: '/'`
 
@@ -101,16 +113,6 @@ If `True`, redirect back to CAS server if CAS authentication fails.
 If `True`, automatically create accounts for authenticated users which don't have one. This
 is a change in behavior from the original django-cas module which hade no such option and
 auto created users.
-
-`CAS_LOGOUT_COMPLETELY: True`
-
-If `True`, redirect and do a CAS logout when user logs out of the Django application.
-It is in most cases pointless to turn this off unless CAS_RENEW is set. 
-
-`CAS_SINGLE_SIGN_OUT: True`
-
-If `True`, support single sign out reqeusts form the CAS server and sign out of the
-Django application when a user signs out of CAS.
 
 `CAS_PROXY_CALLBACK: None`
 
