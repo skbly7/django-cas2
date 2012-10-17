@@ -1,6 +1,10 @@
 Release Notes
 -------------
 
+KTH-2.0.0
+
+* Support for CAS gateway request by setting CAS_GATEWAY, see [README](README.md)
+  for more information.
 * Improved API for proxy granting tickets
   * ```get_tgt_for()``` is now ```Tgt.get_tgt_for_user()``` and can take
     a User object or username as argument.

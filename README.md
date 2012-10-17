@@ -15,6 +15,12 @@ is a Python web application framework.
 More useful detailed information about CAS is the [protocol specification](http://www.jasig.org/cas/protocol)
 and the [CAS Proxy Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough)
 
+## Major relase 2.0
+
+The release 2.0 marks a more definite departure from previous versions of Django
+and focuses on support for Django versions 1.4 and later. See [RELEASE_NOTES](RELEASE_NOTES.md)
+for more information about the relase.
+
 ## Installation
 
 Run python setup.py install as per usual or mess with your PYTHONPATH appropriately.
@@ -92,8 +98,7 @@ ignored and no gateway option sent to the CAS server if CAS_RENEW is set.
 NOTE: setting CAS_GATEWAY will add a parameter, 'casgw', to the service URL to identify
 failed gateway requests as such. It is a part of the inner workings of django_cas and 
 not apublic property, but it may interfere with any existing parameter with the same
-name used by your Django application. The name hence configurable by setting
-`CAS_GATEWAY_PARAM`.
+name used by your Django application. The name is configurable by setting `CAS_GATEWAY_PARAM`.
 
 `CAS_REDIRECT_URL: '/'`
 
