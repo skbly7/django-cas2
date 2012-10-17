@@ -2,8 +2,8 @@
 
 from django.conf import settings
 from django.contrib import auth
-from django.http import HttpResponseRedirect, HttpResponseForbidden, \
-    HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django_cas.models import PgtIOU, SessionServiceTicket
 from urllib import urlencode
 from urlparse import urljoin
@@ -115,7 +115,7 @@ def login(request):
     if settings.CAS_RETRY_LOGIN:
         return HttpResponseRedirect(_login_url(service))
 
-    return HttpResponseForbidden("<html><body><h1>Login failed</h1></body></html>")
+    raise PermissionDenied("Login failed")
  
 
 def _get_session(logout_response):

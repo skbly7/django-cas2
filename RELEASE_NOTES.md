@@ -1,6 +1,9 @@
 Release Notes
 -------------
 
+* Raise PermissionDenied instead of returning inline HttpResponseForbidden 
+  and let Django framework deal with responding properly. Django 1.4 has a 
+  new 403 handler to customize behaviour.
 * Dropped django_cas.decorators. This refactorization enters Django 1.4 land.
   The funcionality of django_cas.decorators is available in the standard
   permission_required decorator in Django 1.4, using the option raise_exception.
