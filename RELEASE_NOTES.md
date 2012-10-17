@@ -1,6 +1,20 @@
 Release Notes
 -------------
 
+* Dropped django_cas.decorators. This refactorization enters Django 1.4 land.
+  The funcionality of django_cas.decorators is available in the standard
+  permission_required decorator in Django 1.4, using the option raise_exception.
+  
+  E.g:
+  ```
+  from django.contrib.auth.decorators import permission_required
+  
+  @permission_required(raise_exception=True)
+  def view_function():
+      ...
+  ``
+  If you need this decorator, upgrade to Django 1.4 if you haven't already.
+
 ## Version KTH-1.2.0
 
 * Dropped 'next_page' and 'required' parameters from views.login and
