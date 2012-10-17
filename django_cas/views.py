@@ -50,6 +50,8 @@ def _login_url(service):
     params = {'service': service}
     if settings.CAS_RENEW:
         params.update({'renew': 'true'})
+    elif settings.CAS_GATEWAY:
+        params.update({'gateway': 'true'})
     if settings.CAS_EXTRA_LOGIN_PARAMS:
         params.update(settings.CAS_EXTRA_LOGIN_PARAMS)
     return urljoin(settings.CAS_SERVER_URL, 'login') + '?' + urlencode(params)
@@ -85,12 +87,17 @@ def login(request, next_page=None, required=False):
         
     if not next_page:
         next_page = _redirect_url(request)
-        
+
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)
 
     service = _service_url(request, next_page)
     ticket = request.GET.get('ticket')
+    # TODO: How to make a difference between failed gateway requests
+    # and initial login request to send to the CAS server? Add a 
+    # parameter to service and handle it? Or, use a different
+    # end point for the service request to separate it from Django
+    # login requests. /Fredrik Jönsson 2012-10-17
     if not ticket:
         return HttpResponseRedirect(_login_url(service))
        
@@ -100,6 +107,8 @@ def login(request, next_page=None, required=False):
         auth.login(request, user)
         return HttpResponseRedirect(next_page)
     
+    # TODO: What is 'required' and when is it ever used? I think it is BS.
+    # /Fredrik Jönsson 2012-10-17
     if settings.CAS_RETRY_LOGIN or required:
         return HttpResponseRedirect(_login_url(service))
 
