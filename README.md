@@ -79,6 +79,10 @@ web services that are not directly accessed by users. This option in CAS is fund
 incompatible with the renew feature mentioned above, hence CAS_GATEWAY will be silently
 ignored and no gateway option sent to the CAS server if CAS_RENEW is set.
 
+NOTE: setting CAS_GATEWAY will add a 'cas_gw=1' parameter to the service URL to identify
+failed gateway requests as such, possibly interfering with any existing parameter with
+that name.
+
 `CAS_REDIRECT_URL: '/'`
 
 Default URL to redirect to after login and logout when there is no referrer or next

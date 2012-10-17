@@ -32,12 +32,19 @@ def _service_url(request, redirect_to):
     """ Returns application service URL for CAS. """
     
     service = _service(request) + request.path
-    if not redirect_to:
+
+    params = {}
+    if settings.CAS_GATEWAY:
+        params.update({'cas_gw': '1'})
+    if redirect_to:
+        params.update({auth.REDIRECT_FIELD_NAME: redirect_to})
+
+    if not params:
         return service
     else:
         return ''.join([service,
                         '?' if not '?' in service else '&',
-                        urlencode({auth.REDIRECT_FIELD_NAME: redirect_to})])
+                        urlencode(params)])
 
 
 def _redirect_url(request):
@@ -98,14 +105,13 @@ def login(request):
 
     service = _service_url(request, next_page)
     ticket = request.GET.get('ticket')
-    # TODO: How to make a difference between failed gateway requests
-    # and initial login request to send to the CAS server? Add a 
-    # parameter to service and handle it? Or, use a different
-    # end point for the service request to separate it from Django
-    # login requests. /Fredrik Jönsson 2012-10-17
+
+    if settings.CAS_GATEWAY and request.GET.pop('cas_gw') and not ticket:
+        raise PermissionDenied()
+    
     if not ticket:
         return HttpResponseRedirect(_login_url(service))
-       
+   
     user = auth.authenticate(ticket=ticket, service=service)
 
     if user is not None:
