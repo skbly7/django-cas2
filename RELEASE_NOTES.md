@@ -1,7 +1,10 @@
 Release Notes
 -------------
 
-KTH-2.0.0
+## Version KTH-2.0.0
+
+This major release targets Django 1.4 and later. That said, most of it will
+work fine on earlier versions, but it is recommended to stay with 1.2.0.
 
 * Support for CAS gateway request by setting CAS_GATEWAY, see [README](README.md)
   for more information.
