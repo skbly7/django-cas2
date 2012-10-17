@@ -17,7 +17,7 @@ def view_func(request):
 	try:
 		ticket_granting_ticket = Tgt.get_tgt_for_user(request.user)
 		proxy_ticket = ticket_granting_ticket.get_proxy_ticket_for("https://your.site.com/service")
-		response = urlopen("https://other.site.com/service?" +  urlencode({'ticket' : proxy_ticket})
+		response = urlopen("https://your.site.com/service?" +  urlencode({'ticket' : proxy_ticket})
 	except Tgt.DoesNotExist:
 		# Raised if there is not ticket granting ticket.
 		...
