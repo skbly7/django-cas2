@@ -8,6 +8,7 @@ _DEFAULTS = {
     'CAS_EXTRA_LOGIN_PARAMS': None,
     'CAS_RENEW': False,
     'CAS_GATEWAY': False,
+    'CAS_GATEWAY_PARAM': 'casgw',
     'CAS_IGNORE_REFERER': False,
     'CAS_LOGOUT_COMPLETELY': True,
     'CAS_SINGLE_SIGN_OUT': True,
@@ -15,7 +16,6 @@ _DEFAULTS = {
     'CAS_RETRY_LOGIN': False,
     'CAS_PROXY_CALLBACK': None,
     'CAS_SERVER_URL': None,
-    'CAS_VERSION': '2',
     'CAS_AUTO_CREATE_USERS' : False,
     'CAS_ALLOWED_PROXIES' : []
 }

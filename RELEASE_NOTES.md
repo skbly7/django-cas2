@@ -1,6 +1,35 @@
 Release Notes
 -------------
 
+## Version KTH-2.0.0
+
+This major release targets Django 1.4 and later. That said, most of it will
+work fine on earlier versions, but it is recommended to stay with 1.2.0.
+
+* Support for CAS gateway request by setting CAS_GATEWAY, see [README](README.md)
+  for more information.
+* Improved API for proxy granting tickets
+  * ```get_tgt_for()``` is now ```Tgt.get_tgt_for_user()``` and can take
+    a User object or username as argument.
+  * ```Tgt.get_proxy_ticket_for()``` is now ```Tgt.get_proxy_ticket_for_service()```.
+  see [PROXY_AUTHENTICATION](PROXY_AUTHENTICATION.md) for more information.
+* Raise PermissionDenied instead of returning inline HttpResponseForbidden 
+  and let Django framework deal with responding properly. Django 1.4 has a 
+  new 403 handler to customize behaviour.
+* Dropped django_cas.decorators. This refactorization enters Django 1.4 land.
+  The funcionality of django_cas.decorators is available in the standard
+  permission_required decorator in Django 1.4, using the option raise_exception.
+  
+  E.g:
+  ```
+  from django.contrib.auth.decorators import permission_required
+  
+  @permission_required('some.permission', raise_exception=True)
+  def view_function():
+      ...
+  ```
+  If you need this decorator, upgrade to Django 1.4 if you haven't already.
+
 ## Version KTH-1.2.0
 
 * Dropped 'next_page' and 'required' parameters from views.login and
