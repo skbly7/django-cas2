@@ -3,7 +3,8 @@
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, logout as do_logout
 from django.contrib.auth.views import login, logout
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 from django_cas.exceptions import CasTicketException
 from django_cas.views import login as cas_login, logout as cas_logout
 from urllib import urlencode
@@ -42,8 +43,7 @@ class CASMiddleware(object):
             if request.user.is_staff:
                 return None
             else:
-                error = ('<html><body><h1>Forbidden</h1><p>You do not have staff privileges.</p></body></html>')
-                return HttpResponseForbidden(error)
+                raise PermissionDenied("No staff priviliges")
         params = urlencode({REDIRECT_FIELD_NAME: request.get_full_path()})        
         return HttpResponseRedirect(settings.LOGIN_URL + '?' + params)
 
