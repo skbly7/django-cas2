@@ -32,12 +32,19 @@ def _service_url(request, redirect_to):
     """ Returns application service URL for CAS. """
     
     service = _service(request) + request.path
-    if not redirect_to:
+
+    params = {}
+    if settings.CAS_GATEWAY:
+        params.update({settings.CAS_GATEWAY_PARAM: '1'})
+    if redirect_to:
+        params.update({auth.REDIRECT_FIELD_NAME: redirect_to})
+
+    if not params:
         return service
     else:
         return ''.join([service,
                         '?' if not '?' in service else '&',
-                        urlencode({auth.REDIRECT_FIELD_NAME: redirect_to})])
+                        urlencode(params)])
 
 
 def _redirect_url(request):
@@ -58,6 +65,8 @@ def _login_url(service):
     params = {'service': service}
     if settings.CAS_RENEW:
         params.update({'renew': 'true'})
+    elif settings.CAS_GATEWAY:
+        params.update({'gateway': 'true'})
     if settings.CAS_EXTRA_LOGIN_PARAMS:
         params.update(settings.CAS_EXTRA_LOGIN_PARAMS)
     return urljoin(settings.CAS_SERVER_URL, 'login') + '?' + urlencode(params)
@@ -96,9 +105,13 @@ def login(request):
 
     service = _service_url(request, next_page)
     ticket = request.GET.get('ticket')
+
+    if settings.CAS_GATEWAY and request.GET.get(settings.CAS_GATEWAY_PARAM) and not ticket:
+        raise PermissionDenied()
+    
     if not ticket:
         return HttpResponseRedirect(_login_url(service))
-       
+   
     user = auth.authenticate(ticket=ticket, service=service)
 
     if user is not None:
