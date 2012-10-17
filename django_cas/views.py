@@ -80,7 +80,7 @@ def _single_sign_out(request):
     logger.debug("Got single sign out callback from CAS for user %s session %s", 
                  request.user, request.session.session_key)
     auth.logout(request)
-    return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
+    return HttpResponse()
 
     
 def login(request):
