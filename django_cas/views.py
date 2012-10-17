@@ -9,10 +9,18 @@ from urllib import urlencode
 from urlparse import urljoin
 from xml.dom import minidom
 import logging
+import types
 
 __all__ = ['login', 'logout', 'proxy_callback']
 
 logger = logging.getLogger(__name__)
+
+# Work around for UnicodeEncodeErrors. 
+def _fix_encoding(x):
+    if type(x) is types.UnicodeType:
+        return x.encode('utf-8');
+    return x
+
 
 def _service(request):
     """ Returns service host URL as derived from request """
@@ -20,7 +28,7 @@ def _service(request):
     return ('http://', 'https://')[request.is_secure()] + request.get_host()
 
 
-def _service_url(request, redirect_to=None):
+def _service_url(request, redirect_to):
     """ Returns application service URL for CAS. """
     
     service = _service(request) + request.path
@@ -36,12 +44,12 @@ def _redirect_url(request):
     """ Redirects to referring page, or CAS_REDIRECT_URL if no referrer. """
 
     if request.GET.get(auth.REDIRECT_FIELD_NAME):
-        return request.GET.get(auth.REDIRECT_FIELD_NAME)
+        return _fix_encoding(request.GET.get(auth.REDIRECT_FIELD_NAME))
     
     if settings.CAS_IGNORE_REFERER:
         return settings.CAS_REDIRECT_URL
 
-    return request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL)
+    return _fix_encoding(request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL))
 
 
 def _login_url(service):
@@ -57,7 +65,7 @@ def _login_url(service):
     return urljoin(settings.CAS_SERVER_URL, 'login') + '?' + urlencode(params)
 
 
-def _logout_url(request, next_page=None):
+def _logout_url(request, next_page):
     """ Returns a CAS logout URL """
 
     logout_url = urljoin(settings.CAS_SERVER_URL, 'logout')
@@ -79,17 +87,13 @@ def _single_sign_out(request):
     return HttpResponse('<html><body><h1>Single Sign Out - Ok</h1></body></html>')
 
     
-# TODO: What is 'required' and when is it ever used? I think it is BS.
-# TODO: Same goes for 'next_page'.
-# /Fredrik Jönsson 2012-10-17
-def login(request, next_page=None, required=False):
+def login(request):
     """ Forwards to CAS login URL or verifies CAS ticket. """
 
     if settings.CAS_SINGLE_SIGN_OUT and request.POST.get('logoutRequest'):
         return _single_sign_out(request)
         
-    if not next_page:
-        next_page = _redirect_url(request)
+    next_page = _redirect_url(request)
 
     if request.user.is_authenticated():
         return HttpResponseRedirect(next_page)
@@ -110,7 +114,7 @@ def login(request, next_page=None, required=False):
         auth.login(request, user)
         return HttpResponseRedirect(next_page)
     
-    if settings.CAS_RETRY_LOGIN or required:
+    if settings.CAS_RETRY_LOGIN:
         return HttpResponseRedirect(_login_url(service))
 
     return HttpResponseForbidden("<html><body><h1>Login failed</h1></body></html>")
@@ -132,14 +136,11 @@ def _get_session(logout_response):
     return None
 
 
-# TODO: What is 'next_page' here and when is it ever used? I think it is BS.
-# /Fredrik Jönsson 2012-10-17
-def logout(request, next_page=None):
+def logout(request):
     """ Redirects to CAS logout page. """
 
     auth.logout(request)
-    if not next_page:
-        next_page = _redirect_url(request)
+    next_page = _redirect_url(request)
     if settings.CAS_LOGOUT_COMPLETELY:
         return HttpResponseRedirect(_logout_url(request, next_page))
     else:
