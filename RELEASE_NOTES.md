@@ -1,6 +1,11 @@
 Release Notes
 -------------
 
+* Improved API for proxy granting tickets
+  * ```get_tgt_for()``` is now ```Tgt.get_tgt_for_user()``` and can take
+    a User object or username as argument.
+  * ```Tgt.get_proxy_ticket_for()``` is now ```Tgt.get_proxy_ticket_for_service()```.
+  see (PROXY_AUTHENTICATION)[PROXY_AUTHENTICATION.md] for more information.
 * Raise PermissionDenied instead of returning inline HttpResponseForbidden 
   and let Django framework deal with responding properly. Django 1.4 has a 
   new 403 handler to customize behaviour.

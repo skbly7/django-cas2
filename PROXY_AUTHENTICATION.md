@@ -3,6 +3,30 @@
 This module supports CAS proxy authentication for machine to machine authentication
 on behalf of a user. For more information details, see [Proxy CAS Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough)
 
+## API
+
+Use the django_cas.models.Tgt class to get tickets for a user and service. Below
+is an example of how this can be done. It is best illustrated by an example.
+
+```
+from urllib import urlencode, urlopen
+from django_cas.models import Tgt
+from django_cas.exceptions import CasTicketException
+
+def view_func(request):
+	try:
+		ticket_granting_ticket = Tgt.get_tgt_for_user(request.user)
+		proxy_ticket = ticket_granting_ticket.get_proxy_ticket_for("https://your.site.com/service")
+		response = urlopen("https://other.site.com/service?" +  urlencode({'ticket' : proxy_ticket})
+	except Tgt.DoesNotExist:
+		# Raised if there is not ticket granting ticket.
+		...
+	except CasTicketException:
+		# Raised if we failed to get a proxy ticket for the service.
+		...
+	...
+```
+
 ## CAS proxy callback
 
 The CAS server injects a proxy granting ticket using a secure call to the application
@@ -17,8 +41,13 @@ directed to the django_cas.views.proxy_callback handler.
 You must ensure that the proxying server not only has SSL but that SSL has the full
 chain of valid certificates. If the CAS server cannot verify the certificate of the 
 client it will simply reject the client and not do proxy auhentication and inject
-a proxy granting ticket. Ordinary authentication will still work. You can use
-the openssl utility to investigate the certificate your server publishes.
+a proxy granting ticket. From the Django app point of view there will be no error
+indicating that the proxy ticket was not sent nor will there be a access log entry.
+The server will just not call the callback URL. If you have access to the login
+server, its logs will show the failed connection attempt.
+ 
+Ordinary authentication will still work. You can use the openssl utility to investigate
+the certificate your server publishes.
 
 ```
 openssl s_client -connect your.proxy.server:443 -verify 3 -pause -showcerts 
