@@ -31,7 +31,7 @@ def view_func(request):
 
 Class representing ticket granting tickets managed by django_cas on behalf of the user.
 
-```Tgt.get_tgt_for_user(user)```
+`Tgt.get_tgt_for_user(user)`
 
 Class method which returns a Tgt object for a user, where `user` is either a 
 `django.contrib.auth.models.User` object or a string username uniquely identifying
@@ -41,7 +41,7 @@ Raises `Tgt.DoesNotExist` if the ticket granting ticket cannot be found which su
 issues with the proxy authentication setup, e.g. SSL certificate issues. Check the 
 log for errors reported by the django_cas backend.
 
-```Tgt.get_proxy_ticket_for_service(service)```
+`Tgt.get_proxy_ticket_for_service(service)`
 
 Instance method which returns a service ticket (a string) which can be used to
 authenticate to the service on the users behalf. The service URL must match, 
