@@ -21,6 +21,31 @@ The release 2.0 marks a more definite departure from previous versions of Django
 and focuses on support for Django versions 1.4 and later. See [RELEASE_NOTES](RELEASE_NOTES.md)
 for more information about the relase.
 
+## Comparing to original django_cas module
+
+This fork was prompted by missing functionality in the original django_cas module.
+The original django_cas module works ok for basic CAS authentication, but does not
+support any more advanced features of CAS. This project add features and removes
+support for old framework versions, e.g:
+
+* Support for CAS proxy authentication making it possible to authenticate to backend
+  web services using CAS.
+* Support for the CAS gateway feature prohibiting user interaction. This is typically
+  used by backend services not directly exposed to the user.
+* Support for CAS single sign out making it possible to sign out users from your
+  Django application when they sign out of the CAS single sign on server. 
+* Use logging and raise 400:s rather than raise 500:s for most error cases.
+* Removed Django messaging. The original module registers a welcome message for
+  all users. This has to be taken care of somewhere else if you want this feature.
+  It's easy enough using the `user_logged_in` signal issued by Django for example.
+* Removed creation of user accounts on successful authentication by default. This 
+  is often not wanted in managed environments. If you want the original behaviuor,
+  use the CAS_AUTO_CREATE_USERS setting mentioned below.
+* Removed support for old versions of Django and Python. This module is currently
+  focused on Django 1.4 and later versions as well as Python 2.6 and later. If you
+  need support for previous versions, look at the 1.2 release of this project or
+  the original django_cas module.
+
 ## Installation
 
 Run python setup.py install as per usual or mess with your PYTHONPATH appropriately.
@@ -117,7 +142,8 @@ If `True`, redirect back to CAS server if CAS authentication fails.
 
 If `True`, automatically create accounts for authenticated users which don't have one. This
 is a change in behavior from the original django-cas module which hade no such option and
-auto created users.
+auto created users. Admittedly, it was probably a mistake to change the default, but there
+you go. It won't hurt your data at least.
 
 `CAS_PROXY_CALLBACK: None`
 

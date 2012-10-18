@@ -16,7 +16,7 @@ from django_cas.exceptions import CasTicketException
 def view_func(request):
 	try:
 		ticket_granting_ticket = Tgt.get_tgt_for_user(request.user)
-		proxy_ticket = ticket_granting_ticket.get_proxy_ticket_for("https://your.site.com/service")
+		proxy_ticket = ticket_granting_ticket.get_proxy_ticket_for_service("https://your.site.com/service")
 		response = urlopen("https://your.site.com/service?" +  urlencode({'ticket' : proxy_ticket})
 	except Tgt.DoesNotExist:
 		# Raised if there is not ticket granting ticket.
@@ -26,6 +26,37 @@ def view_func(request):
 		...
 	...
 ```
+
+### Class ```Tgt```
+
+Class representing ticket granting tickets managed by django_cas on behalf of the user.
+
+```Tgt.get_tgt_for_user(user)```
+
+Class method which returns a Tgt object for a user, where `user` is either a 
+`django.contrib.auth.models.User` object or a string username uniquely identifying
+such an object, i.e. `User.username`.
+
+Raises `Tgt.DoesNotExist` if the ticket granting ticket cannot be found which suggests
+issues with the proxy authentication setup, e.g. SSL certificate issues. Check the 
+log for errors reported by the django_cas backend.
+
+```Tgt.get_proxy_ticket_for_service(service)```
+
+Instance method which returns a service ticket (a string) which can be used to
+authenticate to the service on the users behalf. The service URL must match, 
+exactly, the service URL used by the backend service when it validates the ticket
+with the CAS server. If they don't match authentication will fail.
+
+Raises `CasTicketException` on failure to create a proxy ticket. A common scenario
+for this is if the CAS ticket granting ticket has expired while the Django session
+has not, you may want to coordinate the life time of these. If not caught and handled,
+the middleware will intercept this exception, logout the user and redirect to the
+original URL again which will work in many cases, but may for example loose POST data
+and data stored in the session associated with the user.
+
+The protocol for how to send the ticket to the backend service is a matter for
+specification of the backend service. One way is illustrated in the example above.
 
 ## CAS proxy callback
 
