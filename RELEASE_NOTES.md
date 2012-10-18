@@ -4,7 +4,8 @@ Release Notes
 ## Version KTH-2.0.0
 
 This major release targets Django 1.4 and later. That said, most of it will
-work fine on earlier versions, but it is recommended to stay with 1.2.0.
+work fine in earlier versions, but it is recommended to stay with 1.2.0 if 
+you use older versions of Django.
 
 * Support for CAS gateway request by setting CAS_GATEWAY, see [README](README.md)
   for more information.
@@ -28,7 +29,9 @@ work fine on earlier versions, but it is recommended to stay with 1.2.0.
   def view_function():
       ...
   ```
-  If you need this decorator, upgrade to Django 1.4 if you haven't already.
+  If you need this decorator, upgrade to Django 1.4 if you haven't already. 
+  If you need this decorator and have to stay on Django 1.3, stay with version 1.2.0
+  of this module.
 
 ## Version KTH-1.2.0
 
