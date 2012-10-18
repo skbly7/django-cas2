@@ -48,9 +48,15 @@ support for old framework versions, e.g:
 
 ## Installation
 
-Run python setup.py install as per usual or mess with your PYTHONPATH appropriately.
-Use the master branch for the latest stable version or the pre built source tar-balls
+Run `python setup.py install` as per usual or mess with your PYTHONPATH appropriately,
+using the master branch for the latest stable version or the pre built source tar-balls
 in the downloads section.
+
+Or you can use pip to install directly from the master branch.
+
+```
+pip install -e git+git://github.com/fjollberg/django-cas2#egg=django_cas
+```
 
 ### Django configuration
 
