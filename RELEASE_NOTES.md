@@ -1,6 +1,11 @@
 Release Notes
 -------------
 
+## Version KTH-2.0.1
+
+* Fix a KeyError being thrown when checking if the session was authenticated
+  by cas on sign out.
+
 ## Version KTH-2.0.0
 
 This major release targets Django 1.4 and later. That said, most of it will
