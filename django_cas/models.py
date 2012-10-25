@@ -96,7 +96,7 @@ class SessionServiceTicket(models.Model):
 
 def _is_cas_backend(session):
     """ Checks if the auth backend is CASBackend """
-    backend = session[BACKEND_SESSION_KEY]
+    backend = session.get(BACKEND_SESSION_KEY)
     from django_cas.backends import CASBackend
     return backend == '{0.__module__}.{0.__name__}'.format(CASBackend)
 
