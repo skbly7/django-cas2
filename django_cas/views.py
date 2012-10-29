@@ -32,11 +32,11 @@ def _pass_through(x):
 try:
     from django.utils import six
     if six.PY3:
-        def _fix_encoding = _pass_through
+        _fix_encoding = _pass_through
     else:
-        def _fix_encoding = _encode_utf8_as_bytes
+        _fix_encoding = _encode_utf8_as_bytes
 except ImportError:
-    def _fix_encoding = _encode_utf8_as_bytes
+    _fix_encoding = _encode_utf8_as_bytes
 
 def _service(request):
     """ Returns service host URL as derived from request """
