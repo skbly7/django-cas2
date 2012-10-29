@@ -22,7 +22,7 @@ except ImportError:
 
 try:
     from urllib.request import urlopen
-except Import 
+except ImportError:
     from urllib import urlopen
 
 __all__ = ['Tgt']
