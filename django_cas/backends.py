@@ -5,11 +5,21 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django_cas.exceptions import CasTicketException
 from django_cas.models import Tgt, PgtIOU
-from urllib import urlencode, urlopen
-from urlparse import urljoin
 from xml.dom import minidom
 import logging
 import time
+
+# Python 3/2 imports.
+try:
+    from urllib.parse import urlencode, urljoin
+except ImportError:
+    from urllib import urlencode
+    from urlparse import urljoin
+
+try:
+    from urllib.request import urlopen
+except Import 
+    from urllib import urlopen
 
 __all__ = ['CASBackend']
 

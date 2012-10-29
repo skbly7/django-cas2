@@ -7,7 +7,12 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django_cas.exceptions import CasTicketException
 from django_cas.views import login as cas_login, logout as cas_logout
-from urllib import urlencode
+
+# Python 3/2 imports.
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 __all__ = ['CASMiddleware']
 

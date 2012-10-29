@@ -15,6 +15,8 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Topic :: Internet :: WWW/HTTP',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
     ],
     description='CAS 2.0 authentication backend for Django',
     download_url='https://github.com/fjollberg/django-cas2',

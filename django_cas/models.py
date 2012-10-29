@@ -11,9 +11,19 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import ugettext_lazy as _
 from django_cas.exceptions import CasTicketException
-from urllib import urlencode, urlopen
-from urlparse import urljoin
 from xml.dom import minidom
+
+# Python 3/2 imports.
+try:
+    from urllib.parse import urlencode, urljoin
+except ImportError:
+    from urllib import urlencode
+    from urlparse import urljoin
+
+try:
+    from urllib.request import urlopen
+except Import 
+    from urllib import urlopen
 
 __all__ = ['Tgt']
 

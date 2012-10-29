@@ -5,22 +5,38 @@ from django.contrib import auth
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django_cas.models import PgtIOU, SessionServiceTicket
-from urllib import urlencode
-from urlparse import urljoin
 from xml.dom import minidom
 import logging
 import types
+
+# Python 3/2 imports.
+try:
+    from urllib.parse import urlencode, urljoin
+except ImportError:
+    from urllib import urlencode
+    from urlparse import urljoin
 
 __all__ = ['login', 'logout', 'proxy_callback']
 
 logger = logging.getLogger(__name__)
 
-# Work around for UnicodeEncodeErrors. 
-def _fix_encoding(x):
+# Work around for UnicodeEncodeErrors in redirects with python 2.
+def _encode_utf8_as_bytes(x):
     if type(x) is types.UnicodeType:
         return x.encode('utf-8');
     return x
 
+def _pass_through(x):
+    return x
+
+try:
+    from django.utils import six
+    if six.PY3:
+        def _fix_encoding = _pass_through
+    else:
+        def _fix_encoding = _encode_utf8_as_bytes
+except ImportError:
+    def _fix_encoding = _encode_utf8_as_bytes
 
 def _service(request):
     """ Returns service host URL as derived from request """
