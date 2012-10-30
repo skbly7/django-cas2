@@ -16,14 +16,10 @@ from xml.dom import minidom
 # Python 3/2 imports.
 try:
     from urllib.parse import urlencode, urljoin
-except ImportError:
-    from urllib import urlencode
-    from urlparse import urljoin
-
-try:
     from urllib.request import urlopen
 except ImportError:
-    from urllib import urlopen
+    from urllib import urlencode, urlopen
+    from urlparse import urljoin
 
 __all__ = ['Tgt']
 
