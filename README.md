@@ -15,7 +15,7 @@ is a Python web application framework.
 More useful detailed information about CAS is the [protocol specification](http://www.jasig.org/cas/protocol)
 and the [CAS Proxy Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough)
 
-## Major relase 2.0
+## Major release 2.0
 
 The release 2.0 marks a more definite departure from previous versions of Django
 and focuses on support for Django versions 1.4 and later. See [RELEASE_NOTES](RELEASE_NOTES.md)

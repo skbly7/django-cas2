@@ -28,8 +28,13 @@ class Tgt(models.Model):
     Model representing CAS ticket granting tickets. It can be used
     to retrieve proxy granting tickets for backend web services 
     """
-    username = models.CharField(max_length = 255, unique = True)
-    tgt = models.CharField(max_length = 255)
+    username = models.CharField(_('username'), max_length = 255, unique = True)
+    tgt = models.CharField(_('ticket granting ticket'), max_length = 255)
+    
+    class Meta:
+        db_table = 'django_cas_tgt'
+        verbose_name = _('ticket granting ticket')
+        verbose_name_plural = _('ticket granting tickets')
 
 
     @classmethod
@@ -69,9 +74,14 @@ class Tgt(models.Model):
 
 class PgtIOU(models.Model):
     """ Proxy granting ticket and IOU """
-    pgtIou = models.CharField(max_length = 255, unique = True)
-    tgt = models.CharField(max_length = 255)
+    pgtIou = models.CharField(_('proxy ticket IOU'), max_length = 255, unique = True)
+    tgt = models.CharField(_('ticket granting ticket'), max_length = 255)
     timestamp = models.DateTimeField(auto_now = True)
+
+    class Meta:
+        db_table = 'django_cas_pgtiou'
+        verbose_name = _('proxy ticket IOU')
+        verbose_name_plural = _('proxy ticket IOUs')
 
 
 class SessionServiceTicket(models.Model):
