@@ -118,7 +118,7 @@ def map_service_ticket(sender, **kwargs):
         logged in """
     request = kwargs['request']
     ticket = request.GET.get('ticket')
-    if ticket and _is_cas_backend(request.session):
+    if settings.CAS_SINGLE_SIGN_OUT and ticket and _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.create(service_ticket=ticket,
                                             session_key=session_key)
@@ -129,7 +129,7 @@ def delete_service_ticket(sender, **kwargs):
     """ Deletes the mapping between session key and service ticket after user
         logged out """
     request = kwargs['request']
-    if _is_cas_backend(request.session):
+    if settings.CAS_SINGLE_SIGN_OUT and _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.filter(session_key=session_key).delete()
 
@@ -143,7 +143,8 @@ def delete_old_session_service_tickets(sender, instance, **kwargs):
         You have to run the django-admin command purge_session_service_tickets
         if you don't have sessions mapped to the database.
     """
-    SessionServiceTicket.objects.filter(session_key=instance.session_key).delete()
+    if settings.CAS_SINGLE_SIGN_OUT:
+        SessionServiceTicket.objects.filter(session_key=instance.session_key).delete()
 
 
 @receiver(post_save, sender=PgtIOU)
