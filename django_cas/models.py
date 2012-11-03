@@ -5,9 +5,10 @@ from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.contrib.sessions.models import Session
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import ugettext_lazy as _
 from django_cas.exceptions import CasTicketException
@@ -131,6 +132,18 @@ def delete_service_ticket(sender, **kwargs):
     if _is_cas_backend(request.session):
         session_key = request.session.session_key
         SessionServiceTicket.objects.filter(session_key=session_key).delete()
+
+
+@receiver(post_delete, sender=Session)
+def delete_old_session_service_tickets(sender, instance, **kwargs):
+    """ Deletes session service tickets when mapped sessions are deleted 
+        from the database. Note that this does not catch the case with
+        cached sessions that are not mapped to ordinary Django models.
+        
+        You have to run the django-admin command purge_session_service_tickets
+        if you don't have sessions mapped to the database.
+    """
+    SessionServiceTicket.objects.filter(session_key=instance.session_key).delete()
 
 
 @receiver(post_save, sender=PgtIOU)
