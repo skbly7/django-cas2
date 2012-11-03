@@ -1,6 +1,8 @@
 Release Notes
 -------------
 
+## Version KTH-2.0.2
+
 * Fix, or rather work around for issue with session - service ticket mappings
   being left in the database in some cases, making the table grow indefinitely.
     
