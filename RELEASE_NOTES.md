@@ -3,15 +3,16 @@ Release Notes
 
 ## Version KTH-2.0.2
 
+* Don't store session service tickets when single sign out is disabled.
 * Fix, or rather work around for issue with session - service ticket mappings
   being left in the database in some cases, making the table grow indefinitely.
     
   The solution is to add a post_delete handler which should remove session
   service ticket objects when the session is deleted from the database, when
-  the management command clearsessions is run if nothing else.
+  the management command `cleanup` is run if nothing else.
 
   If the session is not mapped to the database this is not enough however, in
-  which case you'd have to run the new purge_session_service_tickets management
+  which case you'd have to run the new `purge_session_service_tickets` management
   command periodically.
 
 ## Version KTH-2.0.1
