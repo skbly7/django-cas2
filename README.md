@@ -109,7 +109,13 @@ It is in most cases pointless to turn this off unless CAS_RENEW is set.
 `CAS_SINGLE_SIGN_OUT: True`
 
 If `True`, support single sign out reqeusts form the CAS server and sign out of the
-Django application when a user signs out of CAS.
+Django application when a user signs out of CAS. 
+
+NOTE: If your sessions are not database mapped, either with the database backend or
+the cached database backend, the table keeping track of the session ticket - session
+mappings may not always be cleared when sessions are expired and deleted. In that
+case you have to run the django-admin command purge_session_service_tickets
+periodically.
 
 `CAS_RENEW: False`
 
