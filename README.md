@@ -15,7 +15,7 @@ is a Python web application framework.
 More useful detailed information about CAS is the [protocol specification](http://www.jasig.org/cas/protocol)
 and the [CAS Proxy Walkthrough](https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough)
 
-## Major relase 2.0
+## Major release 2.0
 
 The release 2.0 marks a more definite departure from previous versions of Django
 and focuses on support for Django versions 1.4 and later. See [RELEASE_NOTES](RELEASE_NOTES.md)
@@ -109,7 +109,13 @@ It is in most cases pointless to turn this off unless CAS_RENEW is set.
 `CAS_SINGLE_SIGN_OUT: True`
 
 If `True`, support single sign out reqeusts form the CAS server and sign out of the
-Django application when a user signs out of CAS.
+Django application when a user signs out of CAS. 
+
+NOTE: If your sessions are not database mapped, either with the database backend or
+the cached database backend, the table keeping track of the session ticket - session
+mappings may not always be cleared when sessions are expired and deleted. In that
+case you have to run the django-admin command purge_session_service_tickets
+periodically.
 
 `CAS_RENEW: False`
 

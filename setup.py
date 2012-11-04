@@ -1,7 +1,4 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from distutils.core import setup
 
 setup(
     author='KTH Infosys',
@@ -35,5 +32,5 @@ to the admin interface.
     name='django_cas',
     packages=['django_cas'],
     url='https://github.com/fjollberg/django-cas2',
-    version='KTH-2.0.1',
+    version='KTH-2.0.2',
 )
