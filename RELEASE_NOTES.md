@@ -1,6 +1,10 @@
 Release Notes
 -------------
 
+## Version KTH-2.0.3
+
+* Fix broken packaging in 2.0.2 causing management command to be missing.
+
 ## Version KTH-2.0.2
 
 * Don't store session service tickets when single sign out is disabled.
