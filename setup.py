@@ -32,7 +32,9 @@ to the admin interface.
 .. _Django: http://www.djangoproject.com/
 """,
     name='django_cas',
-    packages=['django_cas'],
+    packages=['django_cas',
+              'django_cas/management',
+              'django_cas/management/commands'],
     url='https://github.com/fjollberg/django-cas2',
-    version='KTH-2.0.1',
+    version='KTH-2.0.3',
 )
